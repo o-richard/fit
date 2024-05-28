@@ -16,7 +16,7 @@ A platform that tracks user health entries & fitness data. User health entries s
 
 [ ] -> Process user prompt in Qdrant to obtain entries matching the prompt.
 
-[ ] -> Process user prompt in LLM to provide answers on health entries in the provided timerange.
+[ ] -> Process user prompt in LLM to provide answers on health entries in the provided timerange. Additional context may be provided together with the prompt.
 
 # Project Setup
 
@@ -58,7 +58,9 @@ This directory contains database specific operations.
 
 This directory contains operations for parsing files from configured health & wellness apps and storing the input in the database.
 
-1. **Samsung Health** - After data has been exported from the samsung application, the unzipped export should be places under `/data/parsers/samsung` directory. The unzipped directory contains csv files & a json directory. The files & contents parsed may change over time. Currently, the CSV files whose names contain the substrings **_activity_day_summary_**, **_calories_burned_details_**, **_report_**, **_step_daily_trend_**, **_pedometer_day_summary_** are parsed. Only some of the data is parsed.
+##### Samsung Health (samsung.go)
+
+After data has been exported from the samsung health application, the unzipped export should be places under `/data/parsers/samsung` directory. The unzipped directory contains csv files & a json directory. The files & contents parsed may change over time. Currently, the CSV files whose names contain the substrings **.activity.day_summary.**, **.calories_burned.details.**, **.report.**, **.step_daily_trend.**, **.tracker.pedometer_day_summary.** are parsed. Only some of the data is parsed.
 
 ### /pkg/server/
 

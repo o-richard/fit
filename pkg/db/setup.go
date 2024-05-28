@@ -18,6 +18,11 @@ var (
 	dbInstance *DB
 	dbOnce     sync.Once
 	errDB      error
+
+	// invalid user input
+	ErrValidation = errors.New("invalid data provided")
+	// no rows affected by the operation
+	ErrNoAffectedRows = errors.New("no rows were affected by the operation")
 )
 
 // creates a new database connection if none existed
@@ -76,14 +81,17 @@ func performDatabaseMigrations(db *sql.DB) error {
 		CREATE TABLE fitness_sync (
 			id INTEGER PRIMARY KEY,
 			source TEXT NOT NULL UNIQUE,
-			last_updated_at TEXT NOT NULL
+			last_updated_at TEXT NOT NULL,
+			/* whether the source is currently being updated */
+			is_locked BOOLEAN NOT NULL DEFAULT FALSE
 		);
 		/* Tracks health entries from fitness apps or user. */
 		CREATE TABLE entry (
 			id INTEGER PRIMARY KEY,
-			input_by TEXT NOT NULL CHECK (input_by IN ('system', 'user')),
-			title TEXT,
+			by_user BOOLEAN NOT NULL,
+			title TEXT NOT NULL,
 			content TEXT NOT NULL,
+			images TEXT NOT NULL,
 			started_at TEXT NOT NULL,
 			ended_at TEXT NOT NULL,
 			CHECK (unixepoch(started_at) > 0 AND unixepoch(ended_at) > 0 AND (unixepoch(ended_at) - unixepoch(started_at)) >= 0)
@@ -96,13 +104,3 @@ func performDatabaseMigrations(db *sql.DB) error {
 func (db *DB) Close() error {
 	return db.db.Close()
 }
-
-// Get last updated sync - Lock the row from modifications or single threaded?
-
-// Update or Insert latest sync
-
-// Insert entries (multiple at once)
-
-// Get unique dates....
-
-// get entries, filter based on range
