@@ -2,8 +2,11 @@ package parser
 
 import (
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 	"time"
 
@@ -18,30 +21,30 @@ const (
 
 type samsung struct{}
 
-func (samsung) getEntries() ([]db.HealthEntry, error) {
-	report := ".report."
+func (samsung) getEntries() (entries []db.HealthEntry, mostRecentTimestamp time.Time, source string, err error) {
 	pedometerDaySummary := ".tracker.pedometer_day_summary."
 
-	filepaths, err := filePathWalk(samsungDirectory, []string{report, pedometerDaySummary})
+	filepaths, err := filePathWalk(samsungDirectory, []string{pedometerDaySummary})
 	if err != nil {
-		return nil, err
+		return
 	}
 	timezoneLocation, err := parseSamsungTimezone()
 	if err != nil {
-		return nil, err
+		return
 	}
 
 	appdb, _ := db.NewDB()
 	lastUpdatedAt, err := appdb.GetRecentFitnessSync(samsungSourceName)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return nil, fmt.Errorf("another process is currently parsing samsung files. if this is a mistake, manually update the locked status of the 'samsung' record in the fitness sync table")
+			err = fmt.Errorf("another process is currently parsing samsung files. if this is a mistake, manually update the locked status of the 'samsung' record in the fitness sync table")
+			return
 		}
-		return nil, fmt.Errorf("database error while checking the timestamp of the most recent fitness record from Samsung Health")
+		err = fmt.Errorf("database error while checking the timestamp of the most recent fitness record from Samsung Health, %w", err)
+		return
 	}
 
-	var entries []db.HealthEntry
-	mostRecentTimestamp := lastUpdatedAt
+	mostRecentTimestamp = lastUpdatedAt
 	for filename, filepath := range filepaths {
 		// any absent file is ignored
 		if filepath == "" {
@@ -52,21 +55,22 @@ func (samsung) getEntries() ([]db.HealthEntry, error) {
 		var specificEntries []db.HealthEntry
 		var specificRecentTimestamp time.Time
 		switch filename {
-		case report:
 		case pedometerDaySummary:
 			specificEntries, specificRecentTimestamp, err = parseSamsungPedometerDaySummary(fullFilepath, lastUpdatedAt, timezoneLocation)
 		}
 
 		if err != nil {
 			_ = appdb.UpdateFitnessSync(samsungSourceName, lastUpdatedAt)
-			return nil, err
+			return
 		}
 		if specificRecentTimestamp.Compare(mostRecentTimestamp) > 0 {
 			mostRecentTimestamp = specificRecentTimestamp
 		}
 		entries = append(entries, specificEntries...)
 	}
-	return entries, nil
+	source = samsungSourceName
+	err = nil
+	return
 }
 
 /*
@@ -188,8 +192,55 @@ func parseSamsungPedometerDaySummary(fullFilepath string, lastUpdatedAt time.Tim
 		}
 
 		title := "Pedometer Summary"
-		content := fmt.Sprintf("I covered %v metres in %v steps. I burnt %v calories", record["distance"], record["step_count"], record["calorie"])
+		content := fmt.Sprintf("I covered %v metres in %v steps. I burnt %v kilocalories (kcal).", record["distance"], record["step_count"], record["calorie"])
 		entries = append(entries, db.HealthEntry{Title: title, Content: content, StartedAt: startedAt, EndedAt: endedAt})
+	}
+	return entries, mostRecentTimestamp, nil
+}
+
+/*
+Returns the records of health entries & the most recent timestamp found.
+
+TODO: Determine the extra JSON data to parse.
+
+Assumption: all parsed columns are required hence no need of assigning defaults.
+*/
+func parseSamsungReport(fullFilepath string, lastUpdatedAt time.Time, timezoneLocation *time.Location) ([]db.HealthEntry, time.Time, error) {
+	records, err := parseCSV(fullFilepath, []string{"update_time", "compressed_content"}, 1, 0)
+	if err != nil {
+		return nil, time.Time{}, fmt.Errorf("unable to read %v, %w", fullFilepath, err)
+	}
+
+	var entries []db.HealthEntry
+	mostRecentTimestamp := lastUpdatedAt
+	for _, record := range records {
+		updatedAt, err := time.ParseInLocation(samsungDateTimeLayout, record["update_time"], timezoneLocation)
+		if err != nil {
+			return nil, time.Time{}, fmt.Errorf("unable to parse a timestamp, %w", err)
+		}
+		var firstCharacter string
+		if record["compressed_content"] != "" {
+			firstCharacter = string(record["compressed_content"][0])
+		}
+
+		filePath := fmt.Sprintf("%v/jsons/com.samsung.shealth.report/%v/%v", samsungDirectory, firstCharacter, record["compressed_content"])
+		file, err := os.Open(filePath)
+		if err != nil {
+			return nil, time.Time{}, fmt.Errorf("unable to open a json file '%v', %w", filePath, err)
+		}
+
+		data, _ := io.ReadAll(file)
+		var result map[string]interface{}
+		if err := json.Unmarshal(data, &result); err != nil {
+			return nil, time.Time{}, fmt.Errorf("unable to decode the json file '%v', %w", filePath, err)
+		}
+
+		_ = file.Close()
+
+		if updatedAt.Compare(mostRecentTimestamp) > 0 {
+			mostRecentTimestamp = updatedAt
+		}
+		// TODO: parse result.
 	}
 	return entries, mostRecentTimestamp, nil
 }

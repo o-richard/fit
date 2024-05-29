@@ -47,7 +47,7 @@ func setupDB() (*sql.DB, error) {
 			if err != nil {
 				return nil, fmt.Errorf("error while creating database: %w", err)
 			}
-			file.Close()
+			_ = file.Close()
 			isCreated = true
 		} else {
 			return nil, fmt.Errorf("error while checking database existence: %w", err)

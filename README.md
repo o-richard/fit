@@ -6,7 +6,7 @@ A platform that tracks user health entries & fitness data. User health entries s
 
 [X] -> Setup a database connection. A database should be created in case it does not exist.
 
-[ ] -> Parse exported data from **configured** health & wellness apps. Any parsed data should not be re-parsed.
+[X] -> Parse exported data from **configured** health & wellness apps. Any parsed data should not be re-parsed.
 
 [ ] -> Process & store user-input health entry.
 
@@ -32,12 +32,22 @@ A platform that tracks user health entries & fitness data. User health entries s
 
 ### Usage
 
+- Append `--help` to the executable build path for usage instructions.
+
+```
+Usage of [executable build path]:
+  -parse string
+        Name of the parser. Choices are samsung.
+  -server string
+        Start the HTTP server at the provided port. (default "8000")
+```
+
 ### Development
 
 Run the application.
 
 ```
-go run .
+go run ./...
 ```
 
 # Project structure
@@ -64,12 +74,15 @@ Any new parser should implement `Parser` interface which obtains records to inse
 
 After data has been exported from the samsung health application, the unzipped export should be places under `/data/parsers/samsung` directory. The unzipped directory contains csv files & a json directory. The files & contents parsed may change over time.
 
+Regarding the json directory, the subdirectories in each directory have a single character name that corresponds to first letter of its files.
+
 In the CSV files, the first row is assumed to contain 'useless' metadata. The timestamps are in the layout `2006-01-02 15:04:05.000`.
 
 Currently, the CSV files whose names contain the following substrings are parsed. Only some of the data is parsed.
 
-1. **.report.**
-2. **.tracker.pedometer_day_summary.** - step_count, update_time, create_time, distance, calorie. all the fields are assumed to be provided and no defaults are assigned.
+1. **.tracker.pedometer_day_summary.** - step_count, update_time, create_time, distance (in metres), calorie (in kcal). all the fields are assumed to be provided and no defaults are assigned.
+
+**.report.** is may or may to be parsed in the future. currently it is not parsed since there is not a clear distinction on whether the values are 'correct' or not i.e the integers `2147483647` & `3.4028235e38` are used where sensible values are expected. furthermore, each rows in the CSV file correspond to period (at least a week long) & the retrieval of the year depends on certain hacks since it is not provided with the period.
 
 Samsung Health does not record the timezone information together with the datetime. Timezone is obtained from one of the files containing the substrings (**.badge.**, **.exercise.**, **.report.**, **.pedometer_step_count.**) in the file name. The header should be **_time_offset_** in **.badge.**, **_timezone_** in **.report.**, **_com.samsung.health.exercise.time_offset_** in **.exercise.**, **_com.samsung.health.step_count.time_offset_** in **.pedometer_step_count.**. At least one of the files should be present. **ASSUMPTION:** the first timezone found in any of the listed file corresponds to all the datetimes present in the files.
 
