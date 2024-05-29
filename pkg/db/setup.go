@@ -81,6 +81,7 @@ func performDatabaseMigrations(db *sql.DB) error {
 		CREATE TABLE fitness_sync (
 			id INTEGER PRIMARY KEY,
 			source TEXT NOT NULL UNIQUE,
+			/* the timestamp of the most recent record from the fitness app */
 			last_updated_at TEXT NOT NULL,
 			/* whether the source is currently being updated */
 			is_locked BOOLEAN NOT NULL DEFAULT FALSE

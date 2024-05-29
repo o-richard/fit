@@ -13,11 +13,14 @@ import (
 )
 
 type Parser interface {
-	GetEntries() ([]db.HealthEntry, error)
+	getEntries() ([]db.HealthEntry, error)
 }
 
-// returns csv records. allowed headers consists of a valid list of header names matching the first row of the csv file. if it is an empty slice, all headers are included in the result.
-func parseCSV(filepath string, allowedHeaders []string) ([]map[string]string, error) {
+// returns csv records.
+// allowed headers consists of a valid list of header names matching the first row of the csv file. if it is an empty slice, all headers are included in the result.
+// offset dictates how many rows to skip before reading the first valid row. the first valid row contains the headers of the csv records.
+// rowsToReturn dictates how many rows to return after the row containing the header. zero dictates that all rows are returned. definitely the returned rows may be less than the provided value.
+func parseCSV(filepath string, allowedHeaders []string, offset, rowsToReturn uint) ([]map[string]string, error) {
 	file, err := os.Open(filepath)
 	if err != nil {
 		return nil, fmt.Errorf("error while opening csv file, %w", err)
@@ -26,6 +29,15 @@ func parseCSV(filepath string, allowedHeaders []string) ([]map[string]string, er
 
 	csvReader := csv.NewReader(file)
 
+	// allow for variable number of fields. the skipped rows likely contain metadata.
+	csvReader.FieldsPerRecord = -1
+	// accomodate for the provided offset
+	for i := 0; i < int(offset); i++ {
+		if _, err := csvReader.Read(); err != nil {
+			return nil, fmt.Errorf("error while skipping the first %v rows in the file %v, %w", offset, filepath, err)
+		}
+	}
+	csvReader.FieldsPerRecord = 0
 	// Obtain csv headers
 	headers, err := csvReader.Read()
 	if err != nil {
@@ -46,8 +58,13 @@ func parseCSV(filepath string, allowedHeaders []string) ([]map[string]string, er
 		}
 	}
 
+	var parsedRows int
 	var records []map[string]string
 	for {
+		if rowsToReturn != 0 && parsedRows == int(rowsToReturn) {
+			break
+		}
+
 		row, err := csvReader.Read()
 		if err != nil {
 			if !errors.Is(err, io.EOF) {
@@ -60,6 +77,7 @@ func parseCSV(filepath string, allowedHeaders []string) ([]map[string]string, er
 			data[headers[index]] = row[index]
 		}
 		records = append(records, data)
+		parsedRows++
 	}
 	return records, nil
 }
