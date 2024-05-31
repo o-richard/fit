@@ -6,7 +6,19 @@ import (
 	"time"
 )
 
+const (
+	Sleep     = "sleep"
+	Nutrition = "nutrition"
+	Activity  = "activity"
+	Health    = "health"
+)
+
 type HealthEntry struct {
+	// Sleep;
+	// Nutrition;
+	// Activity;
+	// Health;
+	Type    string
 	Title   string
 	Content string
 	// comma-separated image paths (relative paths)
@@ -19,11 +31,18 @@ type HealthEntry struct {
 func (h *HealthEntry) Validate() bool {
 	h.Title = strings.TrimSpace(h.Title)
 	h.Content = strings.TrimSpace(h.Content)
+
+	switch h.Type {
+	case Sleep, Nutrition, Activity, Health:
+	default:
+		return false
+	}
 	return h.Content != "" && h.EndedAt.Compare(h.StartedAt) >= 0
 }
 
 type HealthEntryOfDay struct {
 	ID      int
+	Type    string
 	ByUser  bool
 	Title   string
 	Content string
@@ -37,7 +56,7 @@ type HealthEntryOfDay struct {
 /*
 Inserts multiple health entries at once.
 
-Considered fields: title, content, images, startedAt, endedAt
+Considered fields: type, title, content, images, startedAt, endedAt
 
 Expected errors (apart from nil & unexpected errors):
   - ErrValidation
@@ -48,21 +67,21 @@ func (db *DB) InsertHealthEntries(byUser bool, entries []HealthEntry) error {
 	}
 
 	query := strings.Builder{}
-	_, _ = query.WriteString(` INSERT INTO entry (by_user, title, content, images, started_at, ended_at) VALUES `)
+	_, _ = query.WriteString(` INSERT INTO entry (type, by_user, title, content, images, started_at, ended_at) VALUES `)
 	maxIndex := len(entries) - 1
-	args := make([]any, 0, len(entries)*5)
+	args := make([]any, 0, len(entries)*7)
 	for i := range entries {
 		if !entries[i].Validate() {
 			return ErrValidation
 		}
 
-		_, _ = query.WriteString(` (?,?,?,?,?,?)`)
+		_, _ = query.WriteString(` (?,?,?,?,?,?,?)`)
 		if i != maxIndex {
 			_, _ = query.WriteString(`,`)
 		} else {
 			_, _ = query.WriteString(`;`)
 		}
-		args = append(args, byUser, entries[i].Title, entries[i].Content, entries[i].Images, entries[i].StartedAt, entries[i].EndedAt)
+		args = append(args, entries[i].Type, byUser, entries[i].Title, entries[i].Content, entries[i].Images, entries[i].StartedAt, entries[i].EndedAt)
 	}
 
 	_, err := db.db.Exec(query.String(), args...)
@@ -182,7 +201,7 @@ func (db *DB) GetHealthEntries(year, month, day int) ([]HealthEntryOfDay, error)
 	date := fmt.Sprintf("%.4d-%.2d-%.2d", year, month, day)
 	query := `
 		SELECT
-			id, by_user, title, content, images,
+			id, type, by_user, title, content, images,
 			CASE 
 				WHEN date(started_at, 'localtime') <> ? THEN 0
 				ELSE ((CAST(strftime('%k', started_at, 'localtime') AS INT) * 60) + (CAST(strftime('%M', started_at, 'localtime') AS INT)))
@@ -202,7 +221,7 @@ func (db *DB) GetHealthEntries(year, month, day int) ([]HealthEntryOfDay, error)
 	var entries []HealthEntryOfDay
 	for rows.Next() {
 		var entry HealthEntryOfDay
-		if err := rows.Scan(&entry.ID, &entry.ByUser, &entry.Title, &entry.Content, &entry.Images, &entry.StartedAtMinutes, &entry.EndedAtMinutes); err != nil {
+		if err := rows.Scan(&entry.ID, &entry.Type, &entry.ByUser, &entry.Title, &entry.Content, &entry.Images, &entry.StartedAtMinutes, &entry.EndedAtMinutes); err != nil {
 			return nil, err
 		}
 		entries = append(entries, entry)

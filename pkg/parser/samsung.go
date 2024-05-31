@@ -193,7 +193,7 @@ func parseSamsungPedometerDaySummary(fullFilepath string, lastUpdatedAt time.Tim
 
 		title := "Pedometer Summary"
 		content := fmt.Sprintf("I covered %v metres in %v steps. I burnt %v kilocalories (kcal).", record["distance"], record["step_count"], record["calorie"])
-		entries = append(entries, db.HealthEntry{Title: title, Content: content, StartedAt: startedAt, EndedAt: endedAt})
+		entries = append(entries, db.HealthEntry{Type: db.Activity, Title: title, Content: content, StartedAt: startedAt, EndedAt: endedAt})
 	}
 	return entries, mostRecentTimestamp, nil
 }

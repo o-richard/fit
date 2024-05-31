@@ -89,6 +89,7 @@ func performDatabaseMigrations(db *sql.DB) error {
 		/* Tracks health entries from fitness apps or user. */
 		CREATE TABLE entry (
 			id INTEGER PRIMARY KEY,
+			type TEXT CHECK (type IN ('sleep', 'nutrition', 'activity', 'health')) NOT NULL,
 			by_user BOOLEAN NOT NULL,
 			title TEXT NOT NULL,
 			content TEXT NOT NULL,

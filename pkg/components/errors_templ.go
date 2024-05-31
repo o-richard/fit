@@ -116,7 +116,7 @@ func Error404() templ.Component {
 	})
 }
 
-func Error500() templ.Component {
+func Error500(additionalContext string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -129,7 +129,7 @@ func Error500() templ.Component {
 			templ_7745c5c3_Var7 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = errorPage("Internal Server Error", "500", "An unexpected condition was encountered. Please contact your site administrator.").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = errorPage("Internal Server Error", "500", fmt.Sprintf("An unexpected condition was encountered. '%v'", additionalContext)).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

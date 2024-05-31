@@ -17,8 +17,8 @@ templ Error404() {
 	@errorPage("Not Found", "404", "The requested resource could not be found.")
 }
 
-templ Error500() {
-	@errorPage("Internal Server Error", "500", "An unexpected condition was encountered. Please contact your site administrator.")
+templ Error500(additionalContext string) {
+	@errorPage("Internal Server Error", "500", fmt.Sprintf("An unexpected condition was encountered. '%v'", additionalContext))
 }
 
 templ ErrorCustom(title string, code int) {

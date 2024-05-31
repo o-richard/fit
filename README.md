@@ -1,6 +1,8 @@
 # Fit
 
-A platform that tracks user health entries & fitness data. User health entries support text, images and videos. Fitness data is obtained from any configured health & wellness app.
+A platform that tracks user health entries & fitness data. User health entries support text and images. Fitness data is obtained from any configured health & wellness app.
+
+The functionality of the platform happens on device unless otherwise.
 
 # TODO
 
@@ -8,7 +10,7 @@ A platform that tracks user health entries & fitness data. User health entries s
 
 [X] -> Parse exported data from **configured** health & wellness apps. Any parsed data should not be re-parsed.
 
-[ ] -> Process & store user-input health entry.
+[X] -> Process & store user-input health entry.
 
 [ ] -> Setup a HTTP server to access a GUI of the application. The server should allow for timeline view of the stored entries.
 
@@ -61,7 +63,8 @@ Generates CSS styles based on the tailwind setup
 make styles
 ```
 
-Generate templ components
+Generate templ components.
+Modify the SHELL variable in the Makefile if need be i.e templ should be discovered within the system path.
 
 ```bash
 make generate
@@ -73,7 +76,8 @@ Run the application.
 go run ./... [command] [options]
 ```
 
-Live reload of the application (Only the HTTP Server)
+Live reload of the application (Only the HTTP Server).
+Modify the SHELL variable in the Makefile if need be i.e templ should be discovered within the system path.
 
 ```bash
 air

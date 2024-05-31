@@ -1,0 +1,31 @@
+package components
+
+templ InsertHealthEntry() {
+	// TODO: Ensure the timezone is properly set after object has loaded to prevent reading property of null
+	<script>
+		document.getElementById("timezoneInfo").value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	</script>
+	@base("New Entry") {
+		<form action="/entry/new" method="post" enctype="multipart/form-data" class="text-red-700">
+			Type:   
+			<select name="entryType">
+				<option value="activity">Activity</option><option value="sleep">Sleep</option>
+				<option value="nutrition">Nutrition</option><option value="health">Health</option>
+			</select>
+			<br/>
+			Title: <input type="text" name="title"/>
+			<br/>
+			Content: <textarea name="content"></textarea>
+			<br/>
+			<input type="hidden" name="timezone" value="" id="timezoneInfo"/>
+			StartedAt: <input type="datetime-local" name="startedAt"/>
+			<br/>
+			EndedAt: <input type="datetime-local" name="endedAt"/>
+			<br/>
+			Images: <input type="file" name="images" multiple/>
+			<br/>
+			<br/>
+			<input type="submit" value="Submit"/>
+		</form>
+	}
+}
