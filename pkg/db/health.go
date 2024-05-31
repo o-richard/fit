@@ -78,7 +78,8 @@ func (db *DB) GetUniqueYearsOfHealthEntries() ([]string, error) {
 	query := `
 		SELECT strftime('%Y', started_at, 'localtime') AS year FROM entry
 		UNION
-		SELECT strftime('%Y', ended_at, 'localtime') AS year FROM entry`
+		SELECT strftime('%Y', ended_at, 'localtime') AS year FROM entry
+		ORDER BY year ASC`
 	rows, err := db.db.Query(query)
 	if err != nil {
 		return nil, err
@@ -110,7 +111,8 @@ func (db *DB) GetUniqueMonthsOfHealthEntries(year int) ([]string, error) {
 	query := `
 		SELECT strftime('%m', started_at, 'localtime') AS month FROM entry WHERE strftime('%Y', started_at, 'localtime') = ?
 		UNION
-		SELECT strftime('%m', ended_at, 'localtime') AS month FROM entry WHERE strftime('%Y', ended_at, 'localtime') = ?`
+		SELECT strftime('%m', ended_at, 'localtime') AS month FROM entry WHERE strftime('%Y', ended_at, 'localtime') = ?
+		ORDER BY month ASC`
 	args := []any{sYear, sYear}
 	rows, err := db.db.Query(query, args...)
 	if err != nil {
@@ -144,7 +146,8 @@ func (db *DB) GetUniqueDaysOfHealthEntries(year, month int) ([]string, error) {
 	query := `
 		SELECT strftime('%d', started_at, 'localtime') AS day FROM entry WHERE strftime('%Y', started_at, 'localtime') = ? AND strftime('%m', started_at, 'localtime') = ?
 		UNION
-		SELECT strftime('%d', ended_at, 'localtime') AS day FROM entry WHERE strftime('%Y', ended_at, 'localtime') = ? AND strftime('%m', ended_at, 'localtime') = ?`
+		SELECT strftime('%d', ended_at, 'localtime') AS day FROM entry WHERE strftime('%Y', ended_at, 'localtime') = ? AND strftime('%m', ended_at, 'localtime') = ?
+		ORDER BY day ASC`
 	args := []any{sYear, sMonth, sYear, sMonth}
 	rows, err := db.db.Query(query, args...)
 	if err != nil {

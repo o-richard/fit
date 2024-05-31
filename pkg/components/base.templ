@@ -1,0 +1,42 @@
+package components
+
+script changeTheme() {
+	document.documentElement.classList.toggle('dark')
+	localStorage.fitTheme = (document.documentElement.classList.contains('dark')) ? 'dark' : 'light'
+}
+
+templ base(title string) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<meta name="robots" content="noindex, nofollow"/>
+			<link rel="stylesheet" href="/css/styles.css"/>
+			<link rel="shortcut icon" href="/favicon.ico" type="image/x-icon"/>
+			<link rel="apple-touch-icon" href="/img/logo.jpg"/>
+			<title>
+				Fit 
+				if title != "" {
+					| { title }
+				}
+			</title>
+			<script>
+				if (localStorage.fitTheme === 'dark' || (!('fitTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+					document.documentElement.classList.add('dark')
+					localStorage.fitTheme = 'dark'
+				} else {
+					document.documentElement.classList.remove('dark')
+					localStorage.fitTheme = 'light'
+				}
+			</script>
+			<script src="/js/htmx.min.js"></script>
+		</head>
+		<body class="bg-white text-black dark:bg-black dark:text-white px-4">
+			<button onClick={ changeTheme() } class="text-red-600 text-lg absolute top-2">Change Light/Dark Mode</button>
+			<main>
+				{ children... }
+			</main>
+		</body>
+	</html>
+}

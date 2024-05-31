@@ -12,6 +12,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/o-richard/fit/pkg/components"
 )
 
 func StartServer(port string) {
@@ -22,6 +23,26 @@ func StartServer(port string) {
 	e.Pre(middleware.RemoveTrailingSlash())
 	e.Use(middleware.Gzip())
 	e.Use(middleware.Recover())
+
+	e.HTTPErrorHandler = func(err error, c echo.Context) {
+		code := http.StatusInternalServerError
+		var he *echo.HTTPError
+		if errors.As(err, &he) {
+			code = he.Code
+		}
+
+		switch code {
+		case http.StatusNotFound:
+			_ = components.TemplRender(c, code, components.Error404())
+		case http.StatusInternalServerError:
+			_ = components.TemplRender(c, code, components.Error500())
+		default:
+			_ = components.TemplRender(c, code, components.ErrorCustom(http.StatusText(code), code))
+		}
+	}
+
+	e.Static("/", "assets/static")
+	e.Static("/media", "assets/images")
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Index Page")

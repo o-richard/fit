@@ -24,9 +24,16 @@ A platform that tracks user health entries & fitness data. User health entries s
 
 ### Usage
 
+- The application binary of the target platform.
+- The `data/parsers/[parser type]` directory in the same directory as the application binary.
+- The `assets/media` & `assets/static` directories in the same directory as the application binary.
+
 ### Development
 
 - [go](https://go.dev/doc/install). It should be installed in your system. The version installed should be compatible with version 1.22.2
+- [tailwind cli](https://github.com/tailwindlabs/tailwindcss/releases/). It should be installed in the tools directory as an executable named "tailwindcss". It outputs CSS stylesheets based on used tailwind classes. The version to download is 3.4.3.
+- [templ](https://templ.guide/quick-start/installation). It should be installed in your system. It generates template components. The version installed should be compatible with version v0.2.707.
+- [air](https://github.com/cosmtrek/air). It should be installed in your system. It performs live reloading for the Go application. The version installed should be compatible with version 1.52.1.
 
 ## Instructions
 
@@ -48,15 +55,43 @@ runserver
 
 ### Development
 
+Generates CSS styles based on the tailwind setup
+
+```bash
+make styles
+```
+
+Generate templ components
+
+```bash
+make generate
+```
+
 Run the application.
 
 ```
 go run ./... [command] [options]
 ```
 
+Live reload of the application (Only the HTTP Server)
+
+```bash
+air
+```
+
+For other Go commands, refer to the offical Golang documentation.
+
+For other templ commands, refer to the [offical guide](https://templ.guide/).
+
+For other air commands, refer to the [offical guide](https://github.com/cosmtrek/air).
+
 # Project structure
 
-### /assets/images/
+### /assets/dev/
+
+This directory development-specific configurations eg Tailwind setup.
+
+### /assets/media/
 
 This directory stores user uploaded images.
 
@@ -72,7 +107,7 @@ This directory contains database specific operations.
 
 This directory contains operations for parsing files from configured health & wellness apps and storing the input in the database.
 
-Any new parser should implement `Parser` interface which obtains records to insert to the database. The parser is responsible for ensuring that entries are not re-parsed & the process is concurrent-safe.
+Any new parser should implement `Parser` interface which obtains records to insert to the database. The parser is responsible for ensuring that entries are not re-parsed & the process is concurrent-safe. The parser should be registered in `ParseFitnessAppRecords` function.
 
 ##### Samsung Health (samsung.go)
 
@@ -103,6 +138,10 @@ This directory contains sample data used in the project.
 ### /testdata/parsers/samsung
 
 This directory contains some of the files that are part of the unzipped export from Samsung Health. Unnecessary columns have been dropped from the CSV files.
+
+### /tools
+
+This directory contains external tools used in the project.
 
 ### db.sqlite3
 
