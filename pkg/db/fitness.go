@@ -18,12 +18,12 @@ func (db *DB) GetRecentFitnessSync(source string) (time.Time, error) {
 	DO UPDATE SET is_locked=excluded.is_locked WHERE NOT fitness_sync.is_locked RETURNING last_updated_at`
 	args := []any{source, time.Time{}}
 
-	var lastUpdatedAt time.Time
+	var lastUpdatedAt string
 	err := db.db.QueryRow(query, args...).Scan(&lastUpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return time.Time{}, sql.ErrNoRows
 	}
-	return lastUpdatedAt, nil
+	return time.Parse("2006-01-02 15:04:05.999999999-07:00", lastUpdatedAt)
 }
 
 /*

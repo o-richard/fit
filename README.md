@@ -35,9 +35,13 @@ A platform that tracks user health entries & fitness data. User health entries s
 - Append `--help` to the executable build path for usage instructions.
 
 ```
-Usage of [executable build path]:
-  -parse string
+Usage of [executable build path] [command] [options]
+
+Available commands:
+parse
+  -type string
         Name of the parser. Choices are samsung.
+runserver
   -server string
         Start the HTTP server at the provided port. (default "8000")
 ```
@@ -47,7 +51,7 @@ Usage of [executable build path]:
 Run the application.
 
 ```
-go run ./...
+go run ./... [command] [options]
 ```
 
 # Project structure
@@ -91,3 +95,15 @@ The Samsung Health version used is **_Version 6.26.6.001_**
 ### /pkg/server/
 
 This directory contains operations specific to the web application server.
+
+### /testdata
+
+This directory contains sample data used in the project.
+
+### /testdata/parsers/samsung
+
+This directory contains some of the files that are part of the unzipped export from Samsung Health. Unnecessary columns have been dropped from the CSV files.
+
+### db.sqlite3
+
+This sqlite database contains the test data used while building the application, it should be deleted when one plans to use the application with their own data.

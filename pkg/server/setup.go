@@ -32,6 +32,7 @@ func StartServer(port string) {
 			if errors.Is(err, http.ErrServerClosed) {
 				fmt.Println(" shuttting down server ... ")
 			} else {
+				shutdownCh <- syscall.SIGINT
 				fmt.Println(" error while starting server, ", err)
 			}
 		}

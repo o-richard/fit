@@ -13,34 +13,52 @@ import (
 )
 
 func main() {
+	parseCmd := flag.NewFlagSet("parse", flag.ExitOnError)
+	serverCmd := flag.NewFlagSet("runserver", flag.ExitOnError)
+
+	var parserType string
+	parseCmd.StringVar(&parserType, "type", "", "Name of the parser. Choices are samsung.")
+
+	var serverPort string
+	serverCmd.StringVar(&serverPort, "server", "8000", "Start the HTTP server at the provided port.")
+
+	flag.Usage = func() {
+		fmt.Printf("Usage of %s [command] [options]\n\nAvailable commands:\nparse\n", os.Args[0])
+		parseCmd.PrintDefaults()
+		fmt.Printf("runserver\n")
+		serverCmd.PrintDefaults()
+	}
+
+	if maxArgs := 2; len(os.Args) < maxArgs {
+		flag.Usage()
+		os.Exit(1)
+	}
+
 	appdb, err := db.NewDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer appdb.Close()
 
-	var fitnessAppParser, serverPort string
-	flag.StringVar(&fitnessAppParser, "parse", "", "Name of the parser. Choices are samsung.")
-	flag.StringVar(&serverPort, "server", "8000", "Start the HTTP server at the provided port.")
-	flag.Parse()
-	if maxArgs := 2; len(os.Args) < maxArgs {
-		flag.Usage()
-		return
-	}
-
-	if fitnessAppParser != "" {
-		err := parser.ParseFitnessAppRecords(fitnessAppParser)
-		if err != nil {
-			fmt.Println(err)
-			return
+	switch os.Args[1] {
+	case "parse":
+		_ = parseCmd.Parse(os.Args[2:])
+		if err := parser.ParseFitnessAppRecords(parserType); err != nil {
+			appdb.Close()
+			log.Fatal(err)
 		}
 		fmt.Println("The fitness app records in the database are up to date.")
-	}
-	if serverPort != "" {
+	case "runserver":
+		_ = serverCmd.Parse(os.Args[2:])
 		if _, err := strconv.Atoi(serverPort); err != nil {
-			fmt.Println("please provide a valid port number")
-			return
+			appdb.Close()
+			log.Fatal("please provide a valid port number")
 		}
 		server.StartServer(serverPort)
+	default:
+		appdb.Close()
+		fmt.Println("Unknown command:", os.Args[1])
+		flag.Usage()
+		os.Exit(1)
 	}
 }
