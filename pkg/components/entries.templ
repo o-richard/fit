@@ -207,6 +207,7 @@ templ HealthEntryDashboard(contents []string) {
 }
 
 templ HealthEntryYears(contents []string) {
+	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
 		<div class="flex items-center font-semibold space-x-2">
 			<a class="text-2xl md:text-4xl text-blue-400" hx-get="/entry" hx-swap="innerHTML show:top" hx-target="#main-content">
@@ -219,6 +220,7 @@ templ HealthEntryYears(contents []string) {
 }
 
 templ HealthEntryMonths(year string, contents []string) {
+	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
 		<div class="flex items-center font-semibold space-x-2">
 			<a class="text-2xl md:text-4xl text-blue-400" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
@@ -235,6 +237,7 @@ templ HealthEntryMonths(year string, contents []string) {
 }
 
 templ HealthEntryDays(year, month string, contents []string) {
+	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
 		<div class="flex items-center font-semibold space-x-2">
 			<p class="text-2xl md:text-4xl text-blue-400" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
