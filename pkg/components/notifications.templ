@@ -1,13 +1,9 @@
 package components
 
-templ NotifyError(title, content string) {
-	<script>
-        toastr.error({ content }, { title })
-    </script>
+script NotifyError(title, content string) {
+	toastr.error(content, title)
 }
 
-templ NotifySuccess(title, content string) {
-	<script>
-        toastr.success({ content }, { title })
-    </script>
+script NotifySuccess(title, content string) {
+	toastr.success(content, title)
 }

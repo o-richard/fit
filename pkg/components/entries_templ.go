@@ -14,12 +14,13 @@ import "fmt"
 
 func insertHealthEntry() templ.ComponentScript {
 	return templ.ComponentScript{
-		Name: `__templ_insertHealthEntry_25c7`,
-		Function: `function __templ_insertHealthEntry_25c7(){const gallery = document.getElementById("gallery")
+		Name: `__templ_insertHealthEntry_2444`,
+		Function: `function __templ_insertHealthEntry_2444(){const gallery = document.getElementById("gallery")
 	const noImages = document.getElementById("no-images")
 	const imageTemplate = document.getElementById("image-template")
 	const dropzoneFileInput = document.getElementById("dropzone-file")
 	
+	const formBtn = document.getElementById("submit-button")
 	const formElement = document.getElementById("new-entry-form")
 	const formContent = document.getElementById("form-content")
 	const formEndedAt = document.getElementById("form-ended-at")
@@ -64,6 +65,11 @@ func insertHealthEntry() templ.ComponentScript {
 		for (const file of e.target.files) {
 			addFile(gallery, file)
 		}
+		const dataTransfer = new DataTransfer()
+		for (const [_, value] of Object.entries(selectedImages)) {
+			dataTransfer.items.add(value)
+		}
+		dropzoneFileInput.files = dataTransfer.files
 	})
 
 	formTimezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -90,16 +96,9 @@ func insertHealthEntry() templ.ComponentScript {
 			}
 		}
 	})
-	formElement.addEventListener('htmx:beforeSend', () => {
-		const dataTransfer = new DataTransfer()
-		for (const [_, value] of Object.entries(selectedImages)) {
-			dataTransfer.items.add(value)
-		}
-		dropzoneFileInput.files = dataTransfer.files
-	})
 }`,
-		Call:       templ.SafeScript(`__templ_insertHealthEntry_25c7`),
-		CallInline: templ.SafeScriptInline(`__templ_insertHealthEntry_25c7`),
+		Call:       templ.SafeScript(`__templ_insertHealthEntry_2444`),
+		CallInline: templ.SafeScriptInline(`__templ_insertHealthEntry_2444`),
 	}
 }
 
@@ -122,7 +121,7 @@ func InsertHealthEntry() templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"flex flex-col items-center\"><h1 class=\"text-2xl font-bold py-4\">New Entry</h1><form method=\"post\" enctype=\"multipart/form-data\" class=\"w-4/5 lg:w-2/5 pb-4\" id=\"new-entry-form\" hx-post=\"/entry/new\" hx-target=\"#toastr-notifications\" hx-swap=\"afterbegin\"><div class=\"flex flex-col gap-2\"><label for=\"entryType\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Type</label> <select name=\"entryType\" id=\"entryType\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\"><option value=\"health\" selected>Health</option> <option value=\"activity\">Activity</option> <option value=\"sleep\">Sleep</option> <option value=\"nutrition\">Nutrition</option></select></div><div class=\"flex flex-col gap-2 py-2\"><label for=\"title\" class=\"text-base font-bold\">Title</label> <input type=\"text\" name=\"title\" id=\"title\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\"></div><div class=\"flex flex-col gap-2 py-2\"><label for=\"form-content\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Content</label> <textarea id=\"form-content\" name=\"content\" rows=\"4\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></textarea></div><input type=\"hidden\" name=\"timezone\" value=\"\" id=\"formTimezone\"><div class=\"flex flex-col gap-2 py-2\"><label for=\"dropzone-file\" class=\"flex items-center justify-center h-40 border-2 border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 border-dashed rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-bray-800\"><div class=\"flex flex-col items-center pt-5 pb-6\"><svg class=\"w-8 h-8 mb-2 text-gray-700 dark:text-gray-200\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 20 16\"><path stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2\"></path></svg><p class=\"mb-2 text-base font-semibold text-gray-700 dark:text-gray-200\">Click to upload</p><p class=\"text-xs text-gray-700 dark:text-gray-200\">JPG or PNG (MAX. 2MB)</p></div><input id=\"dropzone-file\" type=\"file\" name=\"images\" multiple class=\"hidden\" accept=\"image/png, image/jpeg\"></label><ul id=\"gallery\" class=\"flex flex-1 flex-wrap -m-1\"><li id=\"no-images\" class=\"h-44 w-full flex flex-col justify-center \"><img class=\"mx-auto w-32 block dark:hidden\" src=\"/img/no-data.png\" alt=\"no data\"> <span class=\"text-base font-bold text-center text-gray-700 dark:text-gray-100\">No images selected</span></li></ul><template id=\"image-template\"><li class=\"block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24\"><article tabindex=\"0\" class=\"group w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative shadow-sm text-transparent hover:text-white\"><img alt=\"upload preview\" class=\"w-full h-full sticky object-cover rounded-md bg-fixed\"><section class=\"flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3 group-hover:bg-[#05050566]\"><h1 class=\"flex-1\"></h1><div class=\"flex\"><p class=\"p-1 size text-xs\"></p><button class=\"delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md group-hover:hover:bg-[#05050573]\" aria-label=\"Delete\"><svg class=\"pointer-events-none fill-current w-4 h-4 ml-auto\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path class=\"pointer-events-none\" d=\"M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z\"></path></svg></button></div></section></article></li></template></div><div class=\"grid grid-cols-1 md:grid-cols-2 gap-4 py-2\"><div class=\"col-span-1 flex flex-col\"><label for=\"form-started-at\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Started At</label> <input type=\"datetime-local\" name=\"startedAt\" id=\"form-started-at\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></div><div class=\"col-span-1 flex flex-col\"><label for=\"form-ended-at\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Ended At</label> <input type=\"datetime-local\" name=\"endedAt\" id=\"form-ended-at\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></div></div><button type=\"submit\" class=\"mt-2 py-2 w-full bg-blue-400 hover:bg-blue-600 text-base text-white font-bold rounded-2xl transition duration-200\">Submit</button></form></main>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"flex flex-col items-center\"><h1 class=\"text-2xl font-bold py-4\">New Entry</h1><form enctype=\"multipart/form-data\" class=\"w-4/5 lg:w-2/5 pb-4\" id=\"new-entry-form\" hx-post=\"/entry/new\" hx-target=\"#toastr-notifications\" hx-swap=\"innerHTML show:#main-content:top\" hx-on::after-request=\"this.reset()\"><div class=\"flex flex-col gap-2\"><label for=\"entryType\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Type</label> <select name=\"entryType\" id=\"entryType\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\"><option value=\"health\" selected>Health</option> <option value=\"activity\">Activity</option> <option value=\"sleep\">Sleep</option> <option value=\"nutrition\">Nutrition</option></select></div><div class=\"flex flex-col gap-2 py-2\"><label for=\"title\" class=\"text-base font-bold\">Title</label> <input type=\"text\" name=\"title\" id=\"title\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\"></div><div class=\"flex flex-col gap-2 py-2\"><label for=\"form-content\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Content</label> <textarea id=\"form-content\" name=\"content\" rows=\"4\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></textarea></div><input type=\"hidden\" name=\"timezone\" value=\"\" id=\"formTimezone\"><div class=\"flex flex-col gap-2 py-2\"><label for=\"dropzone-file\" class=\"flex items-center justify-center h-40 border-2 border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 border-dashed rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-bray-800\"><div class=\"flex flex-col items-center pt-5 pb-6\"><svg class=\"w-8 h-8 mb-2 text-gray-700 dark:text-gray-200\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 20 16\"><path stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2\"></path></svg><p class=\"mb-2 text-base font-semibold text-gray-700 dark:text-gray-200\">Click to upload</p><p class=\"text-xs text-gray-700 dark:text-gray-200\">JPG or PNG (MAX. 2MB)</p></div><input id=\"dropzone-file\" type=\"file\" name=\"images\" multiple class=\"hidden\" accept=\"image/png, image/jpeg\"></label><ul id=\"gallery\" class=\"flex flex-1 flex-wrap -m-1\"><li id=\"no-images\" class=\"h-44 w-full flex flex-col justify-center \"><img class=\"mx-auto w-32 block dark:hidden\" src=\"/img/no-data.png\" alt=\"no data\"> <span class=\"text-base font-bold text-center text-gray-700 dark:text-gray-100\">No images selected</span></li></ul><template id=\"image-template\"><li class=\"block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24\"><article tabindex=\"0\" class=\"group w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative shadow-sm text-transparent hover:text-white\"><img alt=\"upload preview\" class=\"w-full h-full sticky object-cover rounded-md bg-fixed\"><section class=\"flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3 group-hover:bg-[#05050566]\"><h1 class=\"flex-1\"></h1><div class=\"flex\"><p class=\"p-1 size text-xs\"></p><button class=\"delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md group-hover:hover:bg-[#05050573]\" aria-label=\"Delete\"><svg class=\"pointer-events-none fill-current w-4 h-4 ml-auto\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path class=\"pointer-events-none\" d=\"M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z\"></path></svg></button></div></section></article></li></template></div><div class=\"grid grid-cols-1 md:grid-cols-2 gap-4 py-2\"><div class=\"col-span-1 flex flex-col\"><label for=\"form-started-at\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Started At</label> <input type=\"datetime-local\" name=\"startedAt\" id=\"form-started-at\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></div><div class=\"col-span-1 flex flex-col\"><label for=\"form-ended-at\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Ended At</label> <input type=\"datetime-local\" name=\"endedAt\" id=\"form-ended-at\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></div></div><button type=\"submit\" class=\"mt-2 py-2 w-full bg-blue-400 hover:bg-blue-600 text-base text-white font-bold rounded-2xl transition duration-200\" id=\"submit-button\">Submit</button></form></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -162,7 +161,7 @@ func individualEntryCard(bgColor, content, urlparams string) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?%v", urlparams))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 169, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 168, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -197,7 +196,7 @@ func individualEntryCard(bgColor, content, urlparams string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 172, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 171, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -354,7 +353,7 @@ func HealthEntryMonths(year string, contents []string) templ.Component {
 		var templ_7745c5c3_Var13 string
 		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 225, Col: 112}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 224, Col: 112}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 		if templ_7745c5c3_Err != nil {
@@ -367,7 +366,7 @@ func HealthEntryMonths(year string, contents []string) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 226, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 225, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -412,7 +411,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var16 string
 		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 241, Col: 112}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 240, Col: 112}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 		if templ_7745c5c3_Err != nil {
@@ -425,7 +424,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 242, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 241, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -438,7 +437,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 245, Col: 128}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 244, Col: 128}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -451,7 +450,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 246, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 245, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {

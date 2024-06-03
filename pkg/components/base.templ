@@ -40,6 +40,7 @@ templ base(title string, scripts ...templ.ComponentScript) {
 					localStorage.fitTheme = 'light'
 				}
 			</script>
+			<script src="/js/htmx.min.js"></script>
 		</head>
 		<body class="bg-white text-black dark:bg-black dark:text-white px-4">
 			<nav class="px-0 sm:px-4 py-4 flex justify-between">
@@ -48,8 +49,8 @@ templ base(title string, scripts ...templ.ComponentScript) {
 				</div>
 				<div class="flex space-x-4 md:space-x-6 items-center">
 					<div class="flex space-x-1 md:space-x-4">
-						<a class="text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block" hx-get={ string(templ.URL(fmt.Sprintf("/entry?%v", getCurrentDateAsParam()))) } hx-swap="innerHTML show:top" hx-target="#main-content">Today</a>
-						<a class="text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold" hx-get="/entry" hx-swap="innerHTML show:top" hx-target="#main-content">Calendar</a>
+						<a class="text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block" hx-get={ string(templ.URL(fmt.Sprintf("/entry?%v", getCurrentDateAsParam()))) } hx-swap="innerHTML show:top" hx-target="#main-content" hx-replace-url="/">Today</a>
+						<a class="text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold" hx-get="/entry" hx-swap="innerHTML show:top" hx-target="#main-content" hx-replace-url="/">Calendar</a>
 						<a class="text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block" href="#">Insights</a>
 					</div>
 					<a class="py-2 px-4 md:px-6 bg-blue-400 hover:bg-blue-600 text-sm text-white font-bold rounded-2xl transition duration-200" href="/entry/new">
@@ -69,7 +70,6 @@ templ base(title string, scripts ...templ.ComponentScript) {
 					&nbsp;FIT
 				</p>
 			</footer>
-			<script src="/js/htmx.min.js"></script>
 			<script src="/js/jquery.min.js"></script>
 			<script src="/js/toastr.min.js"></script>
 			<script src="/js/utils.js"></script>

@@ -56,20 +56,20 @@ func base(title string, scripts ...templ.ComponentScript) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script>\n\t\t\t\tif (localStorage.fitTheme === 'dark' || (!('fitTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {\n\t\t\t\t\tdocument.documentElement.classList.add('dark')\n\t\t\t\t\tlocalStorage.fitTheme = 'dark'\n\t\t\t\t} else {\n\t\t\t\t\tdocument.documentElement.classList.remove('dark')\n\t\t\t\t\tlocalStorage.fitTheme = 'light'\n\t\t\t\t}\n\t\t\t</script></head><body class=\"bg-white text-black dark:bg-black dark:text-white px-4\"><nav class=\"px-0 sm:px-4 py-4 flex justify-between\"><div class=\"flex items-center\"><img src=\"/img/logo.png\" alt=\"Logo\" width=\"80\" height=\"80\"></div><div class=\"flex space-x-4 md:space-x-6 items-center\"><div class=\"flex space-x-1 md:space-x-4\"><a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block\" hx-get=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script>\n\t\t\t\tif (localStorage.fitTheme === 'dark' || (!('fitTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {\n\t\t\t\t\tdocument.documentElement.classList.add('dark')\n\t\t\t\t\tlocalStorage.fitTheme = 'dark'\n\t\t\t\t} else {\n\t\t\t\t\tdocument.documentElement.classList.remove('dark')\n\t\t\t\t\tlocalStorage.fitTheme = 'light'\n\t\t\t\t}\n\t\t\t</script><script src=\"/js/htmx.min.js\"></script></head><body class=\"bg-white text-black dark:bg-black dark:text-white px-4\"><nav class=\"px-0 sm:px-4 py-4 flex justify-between\"><div class=\"flex items-center\"><img src=\"/img/logo.png\" alt=\"Logo\" width=\"80\" height=\"80\"></div><div class=\"flex space-x-4 md:space-x-6 items-center\"><div class=\"flex space-x-1 md:space-x-4\"><a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?%v", getCurrentDateAsParam()))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/base.templ`, Line: 51, Col: 173}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/base.templ`, Line: 52, Col: 173}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">Today</a> <a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">Calendar</a> <a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block\" href=\"#\">Insights</a></div><a class=\"py-2 px-4 md:px-6 bg-blue-400 hover:bg-blue-600 text-sm text-white font-bold rounded-2xl transition duration-200\" href=\"/entry/new\"><span class=\"block lg:hidden\">+</span> <span class=\"hidden lg:block\">New Entry</span></a> <button onClick=\"changeTheme()\" id=\"themeToggle\"></button></div></nav><div id=\"main-content\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\" hx-replace-url=\"/\">Today</a> <a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\" hx-replace-url=\"/\">Calendar</a> <a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block\" href=\"#\">Insights</a></div><a class=\"py-2 px-4 md:px-6 bg-blue-400 hover:bg-blue-600 text-sm text-white font-bold rounded-2xl transition duration-200\" href=\"/entry/new\"><span class=\"block lg:hidden\">+</span> <span class=\"hidden lg:block\">New Entry</span></a> <button onClick=\"changeTheme()\" id=\"themeToggle\"></button></div></nav><div id=\"main-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -77,7 +77,7 @@ func base(title string, scripts ...templ.ComponentScript) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"toastr-notifications\"></div><footer class=\"w-full\"><p class=\"text-center py-4 font-bold text-md sm:text-lg\">&copy; <script>document.write(new Date().getFullYear());</script>&nbsp;FIT</p></footer><script src=\"/js/htmx.min.js\"></script><script src=\"/js/jquery.min.js\"></script><script src=\"/js/toastr.min.js\"></script><script src=\"/js/utils.js\"></script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"toastr-notifications\"></div><footer class=\"w-full\"><p class=\"text-center py-4 font-bold text-md sm:text-lg\">&copy; <script>document.write(new Date().getFullYear());</script>&nbsp;FIT</p></footer><script src=\"/js/jquery.min.js\"></script><script src=\"/js/toastr.min.js\"></script><script src=\"/js/utils.js\"></script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

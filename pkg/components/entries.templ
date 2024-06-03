@@ -8,6 +8,7 @@ script insertHealthEntry() {
 	const imageTemplate = document.getElementById("image-template")
 	const dropzoneFileInput = document.getElementById("dropzone-file")
 	
+	const formBtn = document.getElementById("submit-button")
 	const formElement = document.getElementById("new-entry-form")
 	const formContent = document.getElementById("form-content")
 	const formEndedAt = document.getElementById("form-ended-at")
@@ -52,6 +53,11 @@ script insertHealthEntry() {
 		for (const file of e.target.files) {
 			addFile(gallery, file)
 		}
+		const dataTransfer = new DataTransfer()
+		for (const [_, value] of Object.entries(selectedImages)) {
+			dataTransfer.items.add(value)
+		}
+		dropzoneFileInput.files = dataTransfer.files
 	})
 
 	formTimezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -78,20 +84,13 @@ script insertHealthEntry() {
 			}
 		}
 	})
-	formElement.addEventListener('htmx:beforeSend', () => {
-		const dataTransfer = new DataTransfer()
-		for (const [_, value] of Object.entries(selectedImages)) {
-			dataTransfer.items.add(value)
-		}
-		dropzoneFileInput.files = dataTransfer.files
-	})
 }
 
 templ InsertHealthEntry() {
 	@base("New Health Entry", insertHealthEntry()) {
 		<main class="flex flex-col items-center">
 			<h1 class="text-2xl font-bold py-4">New Entry</h1>
-			<form method="post" enctype="multipart/form-data" class="w-4/5 lg:w-2/5 pb-4" id="new-entry-form" hx-post="/entry/new" hx-target="#toastr-notifications" hx-swap="afterbegin">
+			<form enctype="multipart/form-data" class="w-4/5 lg:w-2/5 pb-4" id="new-entry-form" hx-post="/entry/new" hx-target="#toastr-notifications" hx-swap="innerHTML show:#main-content:top" hx-on::after-request="this.reset()">
 				<div class="flex flex-col gap-2">
 					<label for="entryType" class="after:content-['*'] after:ml-0.5 after:text-red-500 text-base font-bold">Type</label>
 					<select name="entryType" id="entryType" class="rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none">
@@ -156,7 +155,7 @@ templ InsertHealthEntry() {
 						<input type="datetime-local" name="endedAt" id="form-ended-at" class="rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none" required/>
 					</div>
 				</div>
-				<button type="submit" class="mt-2 py-2 w-full bg-blue-400 hover:bg-blue-600 text-base text-white font-bold rounded-2xl transition duration-200">
+				<button type="submit" class="mt-2 py-2 w-full bg-blue-400 hover:bg-blue-600 text-base text-white font-bold rounded-2xl transition duration-200" id="submit-button">
 					Submit
 				</button>
 			</form>
