@@ -150,3 +150,11 @@ This directory contains external tools used in the project.
 ### db.sqlite3
 
 This sqlite database contains the test data used while building the application, it should be deleted when one plans to use the application with their own data.
+
+# UI/UX
+
+Currently, the GUI is focussed on medium & large screen sizes.
+
+# Credits
+
+- [Icons Pack](https://www.iconpacks.net/)

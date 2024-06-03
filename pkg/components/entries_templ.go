@@ -10,6 +10,99 @@ import "context"
 import "io"
 import "bytes"
 
+import "fmt"
+
+func insertHealthEntry() templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_insertHealthEntry_25c7`,
+		Function: `function __templ_insertHealthEntry_25c7(){const gallery = document.getElementById("gallery")
+	const noImages = document.getElementById("no-images")
+	const imageTemplate = document.getElementById("image-template")
+	const dropzoneFileInput = document.getElementById("dropzone-file")
+	
+	const formElement = document.getElementById("new-entry-form")
+	const formContent = document.getElementById("form-content")
+	const formEndedAt = document.getElementById("form-ended-at")
+	const formTimezone = document.getElementById("formTimezone")
+	const formStartedAt = document.getElementById("form-started-at")
+	
+	let selectedImages = {}
+	function addFile(target, file) {
+		const oneMb = 1024 * 1024
+		if ((!(file.type === "image/png" || file.type === "image/jpeg")) || (file.size > (2 * oneMb))) {
+			return
+		}
+		
+		const imageObjectURL = URL.createObjectURL(file)
+		const imageClone = imageTemplate.content.cloneNode(true)
+		let humanReadableSize;
+		if (file.size > 1024) {
+			humanReadableSize = file.size > oneMb ? Math.round(file.size / oneMb) + "mb" : Math.round(file.size / 1024) + "kb"
+		} else {
+			humanReadableSize = file.size + "b"
+		}
+
+		imageClone.querySelector("li").id = imageObjectURL
+		imageClone.querySelector("h1").textContent = file.name
+		imageClone.querySelector(".delete").dataset.target = imageObjectURL
+		imageClone.querySelector(".size").textContent = humanReadableSize
+		Object.assign(imageClone.querySelector("img"), {src: imageObjectURL, alt: file.name})
+
+		noImages.classList.add("hidden")
+		target.prepend(imageClone)
+		selectedImages[imageObjectURL] = file
+	}
+	gallery.addEventListener('click', ({ target }) => {
+		if (target.classList.contains("delete")) {
+			const imageObjectURL = target.dataset.target
+			document.getElementById(imageObjectURL).remove()
+			gallery.children.length === 1 && noImages.classList.remove("hidden")
+			delete selectedImages[imageObjectURL]
+		}    
+	})
+	dropzoneFileInput.addEventListener('change', (e) => {
+		for (const file of e.target.files) {
+			addFile(gallery, file)
+		}
+	})
+
+	formTimezone.value = Intl.DateTimeFormat().resolvedOptions().timeZone
+	formContent.addEventListener("change", () => {
+		if (formContent.value.trim() === "") {
+			formContent.setCustomValidity("Please fill out this field.")
+		} else {
+			formContent.setCustomValidity("")
+		}
+	})
+	formStartedAt.addEventListener("change", () => {
+		if (formEndedAt.value === "") {
+			formEndedAt.value = formStartedAt.value
+		}
+	})
+	formEndedAt.addEventListener("change", () => {
+		if (formStartedAt.value !== "") {
+			const startedAtTimestamp = new Date(formStartedAt.value)
+			const endedAtTimestamp = new Date(formEndedAt.value)
+			if (endedAtTimestamp.getTime() < startedAtTimestamp.getTime()) {
+				formEndedAt.setCustomValidity("The end timestamp should be greater than or equal to the start timestamp.")
+			} else {
+				formEndedAt.setCustomValidity("")
+			}
+		}
+	})
+	formElement.addEventListener('htmx:beforeSend', () => {
+		const dataTransfer = new DataTransfer()
+		for (const [_, value] of Object.entries(selectedImages)) {
+			dataTransfer.items.add(value)
+		}
+		dropzoneFileInput.files = dataTransfer.files
+	})
+}`,
+		Call:       templ.SafeScript(`__templ_insertHealthEntry_25c7`),
+		CallInline: templ.SafeScriptInline(`__templ_insertHealthEntry_25c7`),
+	}
+}
+
 func InsertHealthEntry() templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -23,17 +116,13 @@ func InsertHealthEntry() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\t\tdocument.getElementById(\"timezoneInfo\").value = Intl.DateTimeFormat().resolvedOptions().timeZone;\n\t</script>")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
 		templ_7745c5c3_Var2 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 			if !templ_7745c5c3_IsBuffer {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form action=\"/entry/new\" method=\"post\" enctype=\"multipart/form-data\" class=\"text-red-700\">Type:    <select name=\"entryType\"><option value=\"activity\">Activity</option><option value=\"sleep\">Sleep</option> <option value=\"nutrition\">Nutrition</option><option value=\"health\">Health</option></select><br>Title: <input type=\"text\" name=\"title\"><br>Content: <textarea name=\"content\"></textarea><br><input type=\"hidden\" name=\"timezone\" value=\"\" id=\"timezoneInfo\"> StartedAt: <input type=\"datetime-local\" name=\"startedAt\"><br>EndedAt: <input type=\"datetime-local\" name=\"endedAt\"><br>Images: <input type=\"file\" name=\"images\" multiple><br><br><input type=\"submit\" value=\"Submit\"></form>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"flex flex-col items-center\"><h1 class=\"text-2xl font-bold py-4\">New Entry</h1><form method=\"post\" enctype=\"multipart/form-data\" class=\"w-4/5 lg:w-2/5 pb-4\" id=\"new-entry-form\" hx-post=\"/entry/new\" hx-target=\"#toastr-notifications\" hx-swap=\"afterbegin\"><div class=\"flex flex-col gap-2\"><label for=\"entryType\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Type</label> <select name=\"entryType\" id=\"entryType\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\"><option value=\"health\" selected>Health</option> <option value=\"activity\">Activity</option> <option value=\"sleep\">Sleep</option> <option value=\"nutrition\">Nutrition</option></select></div><div class=\"flex flex-col gap-2 py-2\"><label for=\"title\" class=\"text-base font-bold\">Title</label> <input type=\"text\" name=\"title\" id=\"title\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\"></div><div class=\"flex flex-col gap-2 py-2\"><label for=\"form-content\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Content</label> <textarea id=\"form-content\" name=\"content\" rows=\"4\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></textarea></div><input type=\"hidden\" name=\"timezone\" value=\"\" id=\"formTimezone\"><div class=\"flex flex-col gap-2 py-2\"><label for=\"dropzone-file\" class=\"flex items-center justify-center h-40 border-2 border-gray-300 dark:border-gray-600 dark:hover:border-gray-500 border-dashed rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-bray-800\"><div class=\"flex flex-col items-center pt-5 pb-6\"><svg class=\"w-8 h-8 mb-2 text-gray-700 dark:text-gray-200\" aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 20 16\"><path stroke=\"currentColor\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2\"></path></svg><p class=\"mb-2 text-base font-semibold text-gray-700 dark:text-gray-200\">Click to upload</p><p class=\"text-xs text-gray-700 dark:text-gray-200\">JPG or PNG (MAX. 2MB)</p></div><input id=\"dropzone-file\" type=\"file\" name=\"images\" multiple class=\"hidden\" accept=\"image/png, image/jpeg\"></label><ul id=\"gallery\" class=\"flex flex-1 flex-wrap -m-1\"><li id=\"no-images\" class=\"h-44 w-full flex flex-col justify-center \"><img class=\"mx-auto w-32 block dark:hidden\" src=\"/img/no-data.png\" alt=\"no data\"> <span class=\"text-base font-bold text-center text-gray-700 dark:text-gray-100\">No images selected</span></li></ul><template id=\"image-template\"><li class=\"block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24\"><article tabindex=\"0\" class=\"group w-full h-full rounded-md focus:outline-none focus:shadow-outline bg-gray-100 cursor-pointer relative shadow-sm text-transparent hover:text-white\"><img alt=\"upload preview\" class=\"w-full h-full sticky object-cover rounded-md bg-fixed\"><section class=\"flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3 group-hover:bg-[#05050566]\"><h1 class=\"flex-1\"></h1><div class=\"flex\"><p class=\"p-1 size text-xs\"></p><button class=\"delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md group-hover:hover:bg-[#05050573]\" aria-label=\"Delete\"><svg class=\"pointer-events-none fill-current w-4 h-4 ml-auto\" xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path class=\"pointer-events-none\" d=\"M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z\"></path></svg></button></div></section></article></li></template></div><div class=\"grid grid-cols-1 md:grid-cols-2 gap-4 py-2\"><div class=\"col-span-1 flex flex-col\"><label for=\"form-started-at\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Started At</label> <input type=\"datetime-local\" name=\"startedAt\" id=\"form-started-at\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></div><div class=\"col-span-1 flex flex-col\"><label for=\"form-ended-at\" class=\"after:content-[&#39;*&#39;] after:ml-0.5 after:text-red-500 text-base font-bold\">Ended At</label> <input type=\"datetime-local\" name=\"endedAt\" id=\"form-ended-at\" class=\"rounded-lg p-4 font-bold bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-100 focus:outline-none\" required></div></div><button type=\"submit\" class=\"mt-2 py-2 w-full bg-blue-400 hover:bg-blue-600 text-base text-white font-bold rounded-2xl transition duration-200\">Submit</button></form></main>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -42,7 +131,341 @@ func InsertHealthEntry() templ.Component {
 			}
 			return templ_7745c5c3_Err
 		})
-		templ_7745c5c3_Err = base("New Entry").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = base("New Health Entry", insertHealthEntry()).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func individualEntryCard(bgColor, content, urlparams string) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var3 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var3 == nil {
+			templ_7745c5c3_Var3 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"w-full h-52\"><a hx-trigger=\"click\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 string
+		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?%v", urlparams))))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 169, Col: 87}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var5 = []any{fmt.Sprintf("%v h-full rounded-2xl modify-bg-color relative group", bgColor)}
+		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var6 string
+		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templ.CSSClasses(templ_7745c5c3_Var5).String())
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 1, Col: 0}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\"><p class=\"text-gray-600 dark:text-gray-300 absolute text-5xl font-medium top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition ease-in-out delay-150 group-hover:scale-150 duration-300\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var7 string
+		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(content)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 172, Col: 14}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p></div></a></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+var bgColors = []string{
+	"bg-slate-300", "bg-stone-300", "bg-pink-300", "bg-rose-300",
+	"bg-orange-300", "bg-amber-300", "bg-lime-300", "bg-green-300",
+	"bg-teal-300", "bg-blue-300", "bg-indigo-300", "bg-violet-300", "bg-purple-300",
+}
+
+// baseurlparam - suffix is "param="
+func individualEntryCards(baseurlparam string, contents []string) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var8 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var8 == nil {
+			templ_7745c5c3_Var8 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"px-6 py-6\"><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4 justify-items-center\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		for i := range contents {
+			templ_7745c5c3_Err = individualEntryCard(bgColors[i%len(bgColors)], contents[i], fmt.Sprintf("%v%v", baseurlparam, contents[i])).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func HealthEntryDashboard(contents []string) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var9 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var9 == nil {
+			templ_7745c5c3_Var9 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		templ_7745c5c3_Var10 := templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+			if !templ_7745c5c3_IsBuffer {
+				templ_7745c5c3_Buffer = templ.GetBuffer()
+				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">Years</a><p class=\"text-lg sm:text-xl\">></p></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = individualEntryCards("year=", contents).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			if !templ_7745c5c3_IsBuffer {
+				_, templ_7745c5c3_Err = io.Copy(templ_7745c5c3_W, templ_7745c5c3_Buffer)
+			}
+			return templ_7745c5c3_Err
+		})
+		templ_7745c5c3_Err = base("").Render(templ.WithChildren(ctx, templ_7745c5c3_Var10), templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func HealthEntryYears(contents []string) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var11 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var11 == nil {
+			templ_7745c5c3_Var11 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">Years</a><p class=\"text-lg sm:text-xl\">></p></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = individualEntryCards("year=", contents).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func HealthEntryMonths(year string, contents []string) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var12 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var12 == nil {
+			templ_7745c5c3_Var12 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var13 string
+		templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 225, Col: 112}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var14 string
+		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(year)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 226, Col: 10}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a><p class=\"text-lg sm:text-xl\">></p><p class=\"text-2xl md:text-4xl text-blue-400\">Months</p><p class=\"text-lg sm:text-xl\">></p></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = individualEntryCards(fmt.Sprintf("year=%v&month=", year), contents).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if !templ_7745c5c3_IsBuffer {
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
+		}
+		return templ_7745c5c3_Err
+	})
+}
+
+func HealthEntryDays(year, month string, contents []string) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
+		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
+		if !templ_7745c5c3_IsBuffer {
+			templ_7745c5c3_Buffer = templ.GetBuffer()
+			defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
+		}
+		ctx = templ.InitializeContext(ctx)
+		templ_7745c5c3_Var15 := templ.GetChildren(ctx)
+		if templ_7745c5c3_Var15 == nil {
+			templ_7745c5c3_Var15 = templ.NopComponent
+		}
+		ctx = templ.ClearChildren(ctx)
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><p class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var16 string
+		templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 241, Col: 112}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var17 string
+		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(year)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 242, Col: 10}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p class=\"text-lg sm:text-xl\">></p><p class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var18 string
+		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))))
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 245, Col: 128}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var19 string
+		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(month)
+		if templ_7745c5c3_Err != nil {
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 246, Col: 11}
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p class=\"text-lg sm:text-xl\">></p></div>")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = individualEntryCards(fmt.Sprintf("year=%v&month=%v&day=", year, month), contents).Render(ctx, templ_7745c5c3_Buffer)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
