@@ -171,7 +171,7 @@ func individualEntryCard(bgColor, content, urlparams string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 = []any{fmt.Sprintf("%v h-full rounded-2xl modify-bg-color relative group", bgColor)}
+		var templ_7745c5c3_Var5 = []any{fmt.Sprintf("%v h-full rounded-2xl modify-bg-color relative group cursor-pointer", bgColor)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -297,7 +297,7 @@ func HealthEntryDashboard(contents []string) templ.Component {
 				templ_7745c5c3_Buffer = templ.GetBuffer()
 				defer templ.ReleaseBuffer(templ_7745c5c3_Buffer)
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">Years</a><p class=\"text-lg sm:text-xl\">></p></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400 cursor-pointer\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">Years</a><p class=\"text-lg sm:text-xl\">></p></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -361,7 +361,7 @@ func HealthEntryYears(contents []string) templ.Component {
 			templ_7745c5c3_Var12 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<title>Fit</title><main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">Years</a><p class=\"text-lg sm:text-xl\">></p></div>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<title>Fit</title><main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400 cursor-pointer\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\">Years</a><p class=\"text-lg sm:text-xl\">></p></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -406,14 +406,14 @@ func HealthEntryMonths(year string, contents []string) templ.Component {
 			templ_7745c5c3_Var13 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<title>Fit</title><main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<title>Fit</title><main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><a class=\"text-2xl md:text-4xl text-blue-400 cursor-pointer\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 266, Col: 112}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 266, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -477,14 +477,14 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 			templ_7745c5c3_Var16 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<title>Fit</title><main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><p class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<title>Fit</title><main class=\"px-2 flex flex-col gap-5\"><div class=\"flex items-center font-semibold space-x-2\"><p class=\"text-2xl md:text-4xl text-blue-400 cursor-pointer\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 290, Col: 112}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 290, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -503,14 +503,14 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p class=\"text-lg sm:text-xl\">></p><p class=\"text-2xl md:text-4xl text-blue-400\" hx-get=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</p><p class=\"text-lg sm:text-xl\">></p><p class=\"text-2xl md:text-4xl text-blue-400 cursor-pointer\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 294, Col: 128}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 294, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {

@@ -173,7 +173,7 @@ templ InsertHealthEntry() {
 templ individualEntryCard(bgColor, content, urlparams string) {
 	<div class="w-full h-52">
 		<a hx-trigger="click" hx-get={ string(templ.URL(fmt.Sprintf("/entry?%v", urlparams))) } hx-swap="innerHTML show:top" hx-target="#main-content">
-			<div class={ fmt.Sprintf("%v h-full rounded-2xl modify-bg-color relative group", bgColor) }>
+			<div class={ fmt.Sprintf("%v h-full rounded-2xl modify-bg-color relative group cursor-pointer", bgColor) }>
 				<p class="text-gray-600 dark:text-gray-300 absolute text-5xl font-medium top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition ease-in-out delay-150 group-hover:scale-150 duration-300">
 					{ content }
 				</p>
@@ -215,7 +215,7 @@ templ HealthEntryDashboard(contents []string) {
 	@base("") {
 		<main class="px-2 flex flex-col gap-5">
 			<div class="flex items-center font-semibold space-x-2">
-				<a class="text-2xl md:text-4xl text-blue-400" hx-get="/entry" hx-swap="innerHTML show:top" hx-target="#main-content">
+				<a class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get="/entry" hx-swap="innerHTML show:top" hx-target="#main-content">
 					Years
 				</a>
 				<p class="text-lg sm:text-xl">></p>
@@ -243,7 +243,7 @@ templ HealthEntryYears(contents []string) {
 	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
 		<div class="flex items-center font-semibold space-x-2">
-			<a class="text-2xl md:text-4xl text-blue-400" hx-get="/entry" hx-swap="innerHTML show:top" hx-target="#main-content">
+			<a class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get="/entry" hx-swap="innerHTML show:top" hx-target="#main-content">
 				Years
 			</a>
 			<p class="text-lg sm:text-xl">></p>
@@ -263,7 +263,7 @@ templ HealthEntryMonths(year string, contents []string) {
 	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
 		<div class="flex items-center font-semibold space-x-2">
-			<a class="text-2xl md:text-4xl text-blue-400" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
+			<a class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
 				{ year }
 			</a>
 			<p class="text-lg sm:text-xl">></p>
@@ -287,11 +287,11 @@ templ HealthEntryDays(year, month string, contents []string) {
 	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
 		<div class="flex items-center font-semibold space-x-2">
-			<p class="text-2xl md:text-4xl text-blue-400" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
+			<p class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
 				{ year }
 			</p>
 			<p class="text-lg sm:text-xl">></p>
-			<p class="text-2xl md:text-4xl text-blue-400" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))) } hx-swap="innerHTML show:top" hx-target="#main-content">
+			<p class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))) } hx-swap="innerHTML show:top" hx-target="#main-content">
 				{ month }
 			</p>
 			<p class="text-lg sm:text-xl">></p>
