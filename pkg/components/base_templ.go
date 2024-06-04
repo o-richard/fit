@@ -24,6 +24,17 @@ func getCurrentDateAsParam() string {
 	return params.Encode()
 }
 
+func changeTheme() templ.ComponentScript {
+	return templ.ComponentScript{
+		Name: `__templ_changeTheme_9358`,
+		Function: `function __templ_changeTheme_9358(){document.documentElement.classList.toggle('dark')
+    localStorage.fitTheme = (document.documentElement.classList.contains('dark')) ? 'dark' : 'light'
+}`,
+		Call:       templ.SafeScript(`__templ_changeTheme_9358`),
+		CallInline: templ.SafeScriptInline(`__templ_changeTheme_9358`),
+	}
+}
+
 func base(title string, scripts ...templ.ComponentScript) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -49,27 +60,44 @@ func base(title string, scripts ...templ.ComponentScript) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/base.templ`, Line: 31, Col: 14}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/base.templ`, Line: 36, Col: 14}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script>\n\t\t\t\tif (localStorage.fitTheme === 'dark' || (!('fitTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {\n\t\t\t\t\tdocument.documentElement.classList.add('dark')\n\t\t\t\t\tlocalStorage.fitTheme = 'dark'\n\t\t\t\t} else {\n\t\t\t\t\tdocument.documentElement.classList.remove('dark')\n\t\t\t\t\tlocalStorage.fitTheme = 'light'\n\t\t\t\t}\n\t\t\t</script><script src=\"/js/htmx.min.js\"></script></head><body class=\"bg-white text-black dark:bg-black dark:text-white px-4\"><nav class=\"px-0 sm:px-4 py-4 flex justify-between\"><div class=\"flex items-center\"><img src=\"/img/logo.png\" alt=\"Logo\" width=\"80\" height=\"80\"></div><div class=\"flex space-x-4 md:space-x-6 items-center\"><div class=\"flex space-x-1 md:space-x-4\"><a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block\" hx-get=\"")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><script>\n\t\t\t\tif (localStorage.fitTheme === 'dark' || (!('fitTheme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {\n\t\t\t\t\tdocument.documentElement.classList.add('dark')\n\t\t\t\t\tlocalStorage.fitTheme = 'dark'\n\t\t\t\t} else {\n\t\t\t\t\tdocument.documentElement.classList.remove('dark')\n\t\t\t\t\tlocalStorage.fitTheme = 'light'\n\t\t\t\t}\n\t\t\t</script><script src=\"/js/htmx.min.js\"></script></head><body class=\"bg-white text-black dark:bg-black dark:text-white px-4\"><nav class=\"px-0 sm:px-4 py-4 flex justify-between\"><div class=\"flex items-center\"><img src=\"/img/logo.png\" alt=\"Logo\" width=\"80\" height=\"80\"></div><div class=\"flex space-x-4 md:space-x-6 items-center\"><div class=\"flex space-x-1 md:space-x-4\"><a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block cursor-pointer\" hx-get=\"")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?%v", getCurrentDateAsParam()))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/base.templ`, Line: 52, Col: 173}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/base.templ`, Line: 57, Col: 188}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\" hx-replace-url=\"/\">Today</a> <a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\" hx-replace-url=\"/\">Calendar</a> <a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block\" href=\"#\">Insights</a></div><a class=\"py-2 px-4 md:px-6 bg-blue-400 hover:bg-blue-600 text-sm text-white font-bold rounded-2xl transition duration-200\" href=\"/entry/new\"><span class=\"block lg:hidden\">+</span> <span class=\"hidden lg:block\">New Entry</span></a> <button onClick=\"changeTheme()\" id=\"themeToggle\"></button></div></nav><div id=\"main-content\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\" hx-replace-url=\"/\">Today</a> <a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold cursor-pointer\" hx-get=\"/entry\" hx-swap=\"innerHTML show:top\" hx-target=\"#main-content\" hx-replace-url=\"/\">Calendar</a> <a class=\"text-sm hover:text-blue-400 dark:hover:text-blue-400 font-bold hidden md:block\" href=\"#\">Insights</a></div><a class=\"py-2 px-4 md:px-6 bg-blue-400 hover:bg-blue-600 text-sm text-white font-bold rounded-2xl transition duration-200\" href=\"/entry/new\"><span class=\"block lg:hidden\">+</span> <span class=\"hidden lg:block\">New Entry</span></a> ")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		templ_7745c5c3_Err = templ.RenderScriptItems(ctx, templ_7745c5c3_Buffer, changeTheme())
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<button onClick=\"")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		var templ_7745c5c3_Var4 templ.ComponentScript = changeTheme()
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var4.Call)
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("\" id=\"themeToggle\"><svg class=\"block dark:hidden\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"40\" height=\"40\" viewBox=\"0 0 256 256\" xml:space=\"preserve\"><defs></defs> <g style=\"stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;\" transform=\"translate(18.12918287937744 18.12918287937741) scale(2.43 2.43)\"><path d=\"M 45 68 c -12.682 0 -23 -10.317 -23 -23 c 0 -12.682 10.318 -23 23 -23 c 12.683 0 23 10.318 23 23 C 68 57.683 57.683 68 45 68 z M 45 28 c -9.374 0 -17 7.626 -17 17 s 7.626 17 17 17 s 17 -7.626 17 -17 S 54.374 28 45 28 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path> <path d=\"M 45 17.556 c -1.657 0 -3 -1.343 -3 -3 V 3 c 0 -1.657 1.343 -3 3 -3 c 1.657 0 3 1.343 3 3 v 11.556 C 48 16.212 46.657 17.556 45 17.556 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path> <path d=\"M 45 90 c -1.657 0 -3 -1.343 -3 -3 V 75.444 c 0 -1.657 1.343 -3 3 -3 c 1.657 0 3 1.343 3 3 V 87 C 48 88.657 46.657 90 45 90 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path> <path d=\"M 14.556 48 H 3 c -1.657 0 -3 -1.343 -3 -3 c 0 -1.657 1.343 -3 3 -3 h 11.556 c 1.657 0 3 1.343 3 3 C 17.556 46.657 16.212 48 14.556 48 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path> <path d=\"M 87 48 H 75.444 c -1.657 0 -3 -1.343 -3 -3 c 0 -1.657 1.343 -3 3 -3 H 87 c 1.657 0 3 1.343 3 3 C 90 46.657 88.657 48 87 48 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path> <path d=\"M 66.527 26.473 c -0.768 0 -1.535 -0.293 -2.121 -0.878 c -1.172 -1.172 -1.172 -3.071 0 -4.243 l 8.171 -8.171 c 1.172 -1.172 3.07 -1.171 4.242 0 c 1.172 1.172 1.172 3.071 0 4.243 l -8.171 8.171 C 68.063 26.18 67.295 26.473 66.527 26.473 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path> <path d=\"M 15.302 77.698 c -0.768 0 -1.536 -0.293 -2.121 -0.879 c -1.172 -1.171 -1.172 -3.071 0 -4.242 l 8.171 -8.171 c 1.171 -1.172 3.071 -1.172 4.242 0 c 1.172 1.171 1.172 3.071 0 4.242 l -8.171 8.171 C 16.837 77.405 16.069 77.698 15.302 77.698 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path> <path d=\"M 23.473 26.473 c -0.768 0 -1.536 -0.293 -2.121 -0.878 l -8.171 -8.171 c -1.172 -1.172 -1.172 -3.071 0 -4.243 c 1.172 -1.172 3.072 -1.171 4.243 0 l 8.171 8.171 c 1.172 1.172 1.172 3.071 0 4.243 C 25.008 26.18 24.24 26.473 23.473 26.473 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path> <path d=\"M 74.698 77.698 c -0.768 0 -1.535 -0.293 -2.121 -0.879 l -8.171 -8.171 c -1.172 -1.171 -1.172 -3.071 0 -4.242 c 1.172 -1.172 3.07 -1.172 4.242 0 l 8.171 8.171 c 1.172 1.171 1.172 3.071 0 4.242 C 76.233 77.405 75.466 77.698 74.698 77.698 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path></g></svg> <svg class=\"hidden dark:block\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"40\" height=\"40\" viewBox=\"0 0 256 256\" xml:space=\"preserve\"><defs></defs> <g style=\"stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;\" transform=\"translate(45.02412451361867 45.024124513618645) scale(1.83 1.83)\"><path d=\"M 46.715 90 c -3.908 0 -7.841 -0.514 -11.717 -1.552 C 23.391 85.337 13.69 77.893 7.682 67.487 C 1.674 57.08 0.077 44.957 3.188 33.349 c 3.11 -11.607 10.554 -21.308 20.961 -27.316 c 8.601 -4.967 18.349 -6.923 28.193 -5.659 c 1.257 0.162 2.277 1.095 2.548 2.332 c 0.271 1.238 -0.265 2.512 -1.338 3.185 c -13.943 8.735 -18.418 26.742 -10.188 40.996 l 0 0 C 51.592 61.14 69.426 66.268 83.96 58.56 c 1.117 -0.596 2.491 -0.421 3.426 0.434 c 0.936 0.854 1.235 2.204 0.746 3.373 c -3.826 9.156 -10.395 16.621 -18.997 21.586 C 62.204 87.955 54.509 90 46.715 90 z M 43.74 6.101 c -5.805 0.421 -11.436 2.15 -16.592 5.127 c -9.019 5.207 -15.47 13.614 -18.166 23.674 C 6.287 44.961 7.67 55.469 12.877 64.488 c 5.207 9.019 13.614 15.471 23.673 18.165 c 10.058 2.697 20.567 1.311 29.585 -3.895 c 5.156 -2.977 9.47 -6.989 12.737 -11.806 c -15.547 4.094 -32.303 -2.515 -40.705 -17.066 l 0 0 C 29.768 35.336 32.427 17.518 43.74 6.101 z\" style=\"stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(59,130,246); fill-rule: nonzero; opacity: 1;\" transform=\" matrix(1 0 0 1 0 0) \" stroke-linecap=\"round\"></path></g></svg></button></div></nav><div id=\"main-content\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -77,7 +105,7 @@ func base(title string, scripts ...templ.ComponentScript) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"toastr-notifications\"></div><footer class=\"w-full\"><p class=\"text-center py-4 font-bold text-md sm:text-lg\">&copy; <script>document.write(new Date().getFullYear());</script>&nbsp;FIT</p></footer><script src=\"/js/jquery.min.js\"></script><script src=\"/js/toastr.min.js\"></script><script src=\"/js/utils.js\"></script>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div><div id=\"toastr-notifications\"></div><footer class=\"w-full\"><p class=\"text-center py-4 font-bold text-md sm:text-lg\">&copy; <script>document.write(new Date().getFullYear());</script>&nbsp;FIT</p></footer><script src=\"/js/jquery.min.js\"></script><script src=\"/js/toastr.min.js\"></script><script>\n\t\t\t\ttoastr.options = {\n\t\t\t\t\t\"closeButton\": false,\n\t\t\t\t\t\"debug\": false,\n\t\t\t\t\t\"newestOnTop\": false,\n\t\t\t\t\t\"progressBar\": true,\n\t\t\t\t\t\"positionClass\": \"toast-top-right\",\n\t\t\t\t\t\"preventDuplicates\": false,\n\t\t\t\t\t\"onclick\": null,\n\t\t\t\t\t\"showDuration\": \"300\",\n\t\t\t\t\t\"hideDuration\": \"1000\",\n\t\t\t\t\t\"timeOut\": \"5000\",\n\t\t\t\t\t\"extendedTimeOut\": \"1000\",\n\t\t\t\t\t\"showEasing\": \"swing\",\n\t\t\t\t\t\"hideEasing\": \"linear\",\n\t\t\t\t\t\"showMethod\": \"fadeIn\",\n\t\t\t\t\t\"hideMethod\": \"fadeOut\"\n\t\t\t\t}\n\t\t\t</script>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

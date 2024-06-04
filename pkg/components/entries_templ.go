@@ -171,7 +171,7 @@ func individualEntryCard(bgColor, content, urlparams string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var5 = []any{fmt.Sprintf("%v h-full rounded-2xl modify-bg-color relative group cursor-pointer", bgColor)}
+		var templ_7745c5c3_Var5 = []any{fmt.Sprintf("%v h-full rounded-2xl relative group cursor-pointer", bgColor)}
 		templ_7745c5c3_Err = templ.RenderCSSItems(ctx, templ_7745c5c3_Buffer, templ_7745c5c3_Var5...)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
@@ -214,9 +214,9 @@ func individualEntryCard(bgColor, content, urlparams string) templ.Component {
 }
 
 var bgColors = []string{
-	"bg-slate-300", "bg-stone-300", "bg-pink-300", "bg-rose-300",
-	"bg-orange-300", "bg-amber-300", "bg-lime-300", "bg-green-300",
-	"bg-teal-300", "bg-blue-300", "bg-indigo-300", "bg-violet-300", "bg-purple-300",
+	"bg-slate-300 dark:bg-slate-600", "bg-stone-300 dark:bg-stone-600", "bg-pink-300 dark:bg-pink-600", "bg-rose-300 dark:bg-rose-600",
+	"bg-orange-300 dark:bg-orange-600", "bg-amber-300 dark:bg-amber-600", "bg-lime-300 dark:bg-lime-600", "bg-green-300 dark:bg-green-600",
+	"bg-teal-300 dark:bg-teal-600", "bg-blue-300 dark:bg-blue-600", "bg-indigo-300 dark:bg-indigo-600", "bg-violet-300 dark:bg-violet-600", "bg-purple-300 dark:bg-purple-600",
 }
 
 // baseurlparam - suffix is "param="
@@ -332,22 +332,6 @@ func HealthEntryDashboard(contents []string) templ.Component {
 	})
 }
 
-func modifyBGColors() templ.ComponentScript {
-	return templ.ComponentScript{
-		Name: `__templ_modifyBGColors_b553`,
-		Function: `function __templ_modifyBGColors_b553(){if (localStorage.fitTheme === "light") {
-        themeToggle.innerHTML = lightModeHTML
-        modifyColorsBasedOnTheme(false)
-    } else {
-        themeToggle.innerHTML = darkModeHTML
-        modifyColorsBasedOnTheme(true)
-    }
-}`,
-		Call:       templ.SafeScript(`__templ_modifyBGColors_b553`),
-		CallInline: templ.SafeScriptInline(`__templ_modifyBGColors_b553`),
-	}
-}
-
 func HealthEntryYears(contents []string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
@@ -380,12 +364,6 @@ func HealthEntryYears(contents []string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(contents) != 0 {
-			templ_7745c5c3_Err = modifyBGColors().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
 		if !templ_7745c5c3_IsBuffer {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
 		}
@@ -413,7 +391,7 @@ func HealthEntryMonths(year string, contents []string) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 266, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 253, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -426,7 +404,7 @@ func HealthEntryMonths(year string, contents []string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 267, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 254, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -450,12 +428,6 @@ func HealthEntryMonths(year string, contents []string) templ.Component {
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
-		}
-		if len(contents) != 0 {
-			templ_7745c5c3_Err = modifyBGColors().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 		}
 		if !templ_7745c5c3_IsBuffer {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)
@@ -484,7 +456,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 290, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 274, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -497,7 +469,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 291, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 275, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -510,7 +482,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 294, Col: 143}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 278, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -523,7 +495,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 295, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 279, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -547,12 +519,6 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</main>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
-		}
-		if len(contents) != 0 {
-			templ_7745c5c3_Err = modifyBGColors().Render(ctx, templ_7745c5c3_Buffer)
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
 		}
 		if !templ_7745c5c3_IsBuffer {
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteTo(templ_7745c5c3_W)

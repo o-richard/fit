@@ -173,7 +173,7 @@ templ InsertHealthEntry() {
 templ individualEntryCard(bgColor, content, urlparams string) {
 	<div class="w-full h-52">
 		<a hx-trigger="click" hx-get={ string(templ.URL(fmt.Sprintf("/entry?%v", urlparams))) } hx-swap="innerHTML show:top" hx-target="#main-content">
-			<div class={ fmt.Sprintf("%v h-full rounded-2xl modify-bg-color relative group cursor-pointer", bgColor) }>
+			<div class={ fmt.Sprintf("%v h-full rounded-2xl relative group cursor-pointer", bgColor) }>
 				<p class="text-gray-600 dark:text-gray-300 absolute text-5xl font-medium top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 transition ease-in-out delay-150 group-hover:scale-150 duration-300">
 					{ content }
 				</p>
@@ -183,9 +183,9 @@ templ individualEntryCard(bgColor, content, urlparams string) {
 }
 
 var bgColors = []string{
-	"bg-slate-300", "bg-stone-300", "bg-pink-300", "bg-rose-300",
-	"bg-orange-300", "bg-amber-300", "bg-lime-300", "bg-green-300",
-	"bg-teal-300", "bg-blue-300", "bg-indigo-300", "bg-violet-300", "bg-purple-300",
+	"bg-slate-300 dark:bg-slate-600", "bg-stone-300 dark:bg-stone-600", "bg-pink-300 dark:bg-pink-600", "bg-rose-300 dark:bg-rose-600",
+	"bg-orange-300 dark:bg-orange-600", "bg-amber-300 dark:bg-amber-600", "bg-lime-300 dark:bg-lime-600", "bg-green-300 dark:bg-green-600",
+	"bg-teal-300 dark:bg-teal-600", "bg-blue-300 dark:bg-blue-600", "bg-indigo-300 dark:bg-indigo-600", "bg-violet-300 dark:bg-violet-600", "bg-purple-300 dark:bg-purple-600",
 }
 
 // baseurlparam - suffix is "param="
@@ -229,16 +229,6 @@ templ HealthEntryDashboard(contents []string) {
 	}
 }
 
-script modifyBGColors() {
-	if (localStorage.fitTheme === "light") {
-        themeToggle.innerHTML = lightModeHTML
-        modifyColorsBasedOnTheme(false)
-    } else {
-        themeToggle.innerHTML = darkModeHTML
-        modifyColorsBasedOnTheme(true)
-    }
-}
-
 templ HealthEntryYears(contents []string) {
 	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
@@ -254,9 +244,6 @@ templ HealthEntryYears(contents []string) {
 			@individualEntryCards("year=", contents)
 		}
 	</main>
-	if len(contents) != 0 {
-		@modifyBGColors()
-	}
 }
 
 templ HealthEntryMonths(year string, contents []string) {
@@ -278,9 +265,6 @@ templ HealthEntryMonths(year string, contents []string) {
 			@individualEntryCards(fmt.Sprintf("year=%v&month=", year), contents)
 		}
 	</main>
-	if len(contents) != 0 {
-		@modifyBGColors()
-	}
 }
 
 templ HealthEntryDays(year, month string, contents []string) {
@@ -302,7 +286,4 @@ templ HealthEntryDays(year, month string, contents []string) {
 			@individualEntryCards(fmt.Sprintf("year=%v&month=%v&day=", year, month), contents)
 		}
 	</main>
-	if len(contents) != 0 {
-		@modifyBGColors()
-	}
 }
