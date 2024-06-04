@@ -16,7 +16,7 @@ The functionality of the platform happens on device unless otherwise.
 
 [ ] -> Setup Qdrant to embed the stored unstructured data.
 
-[ ] -> Process user prompt in Qdrant to obtain entries matching the prompt.
+[ ] -> Process user prompt in Qdrant to obtain entries matching the prompt. History of prompts in the current execution window may be shown.
 
 [ ] -> Process user prompt in LLM to provide answers on health entries in the provided timerange. Additional context may be provided together with the prompt.
 
