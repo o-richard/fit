@@ -51,7 +51,7 @@ parse
   -type string
         Name of the parser. Choices are samsung.
 runserver
-  -server string
+  -port string
         Start the HTTP server at the provided port. (default "8000")
 ```
 

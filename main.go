@@ -20,7 +20,7 @@ func main() {
 	parseCmd.StringVar(&parserType, "type", "", "Name of the parser. Choices are samsung.")
 
 	var serverPort string
-	serverCmd.StringVar(&serverPort, "server", "8000", "Start the HTTP server at the provided port.")
+	serverCmd.StringVar(&serverPort, "port", "8000", "Start the HTTP server at the provided port.")
 
 	flag.Usage = func() {
 		fmt.Printf("Usage of %s [command] [options]\n\nAvailable commands:\nparse\n", os.Args[0])

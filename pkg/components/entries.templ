@@ -271,19 +271,69 @@ templ HealthEntryDays(year, month string, contents []string) {
 	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
 		<div class="flex items-center font-semibold space-x-2">
-			<p class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
+			<a class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
 				{ year }
-			</p>
+			</a>
 			<p class="text-lg sm:text-xl">></p>
-			<p class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))) } hx-swap="innerHTML show:top" hx-target="#main-content">
+			<a class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))) } hx-swap="innerHTML show:top" hx-target="#main-content">
 				{ month }
-			</p>
+			</a>
 			<p class="text-lg sm:text-xl">></p>
 		</div>
 		if len(contents) == 0 {
 			@noHealthEntries()
 		} else {
 			@individualEntryCards(fmt.Sprintf("year=%v&month=%v&day=", year, month), contents)
+		}
+	</main>
+}
+
+templ HealthEntryDay(year, month, day string, contents []string) {
+	<title>Fit</title>
+	<main class="px-2 flex flex-col gap-5">
+		<div class="flex items-center font-semibold space-x-2">
+			<a class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v", year))) } hx-swap="innerHTML show:top" hx-target="#main-content">
+				{ year }
+			</a>
+			<p class="text-lg sm:text-xl">></p>
+			<a class="text-2xl md:text-4xl text-blue-400 cursor-pointer" hx-get={ string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))) } hx-swap="innerHTML show:top" hx-target="#main-content">
+				{ month }
+			</a>
+			<p class="text-lg sm:text-xl">></p>
+			<p class="text-2xl md:text-4xl text-blue-400">
+				{ day }
+			</p>
+		</div>
+		if len(contents) == 0 {
+			@noHealthEntries()
+		} else {
+			/*
+				Each hour - 2880 / 24 = 120px
+				Each 10 minutes - 120 / 6 = 20px
+				Each minute - 20 / 10 = 2px
+
+				Even though tailwind has classes to specify the number of pixels, the number is mentioned explicitly for the sake of calculations.
+			*/
+			<div class="relative h-[2880px]">
+				<div class="absolute top-4 left-24 w-[8px] bg-gray-400 dark:bg-gray-200 h-[2880px]">
+					for i := 0; i < 24; i++ {
+						<div class="h-[120px]">
+							// total width - |left position| = width of bar so that the border starts of the right edge of the bar
+							<div class="relative before:content-[''] before:absolute before:top-0 before:left-[-20px] before:w-[28px] before:border-gray-400 before:dark:border-gray-200 before:border-t-4">
+								// top & left sizes work out well for the chosen font size
+								<span class="absolute top-[-10px] -left-20 text-base font-medium">
+									{ fmt.Sprintf("%.2d:00", i) }
+								</span>
+							</div>
+							for j := 0; j <= 6; j++ {
+								// total width - |left position| = width of bar so that the border starts of the right edge of the bar
+								// the larger border sizes at the hour positions mask the effect of this bar
+								<div class="relative h-[20px] before:content-[''] before:absolute before:top-0 before:left-[-12px] before:w-[20px] before:border-gray-400 before:dark:border-gray-200 before:border-t-2"></div>
+							}
+						</div>
+					}
+				</div>
+			</div>
 		}
 	</main>
 }
