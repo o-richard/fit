@@ -41,7 +41,11 @@ func (h *HealthEntry) Validate() bool {
 }
 
 type HealthEntryOfDay struct {
-	ID      int
+	ID int
+	// Sleep;
+	// Nutrition;
+	// Activity;
+	// Health;
 	Type    string
 	ByUser  bool
 	Title   string
@@ -190,7 +194,7 @@ func (db *DB) GetUniqueDaysOfHealthEntries(year, month int) ([]string, error) {
 }
 
 /*
-Retrieve health entries of a particular date ordered by the startedAt field.
+Retrieve health entries of a particular date ordered by the startedAt field (ascending), endedAt field (ascending), id (ascending).
 
 In case the startedAt field's date is not of the provided date but the endedAt's field date is, the start time becomes 0.00.
 In case the endedAt field's date is not of the provided date but the startedAt's field date is, the end time becomes 23.59.
@@ -210,7 +214,7 @@ func (db *DB) GetHealthEntries(year, month, day int) ([]HealthEntryOfDay, error)
 				WHEN date(ended_at, 'localtime') <> ? THEN ((23 * 60) + 59)
 				ELSE ((CAST(strftime('%k', ended_at, 'localtime') AS INT) * 60) + (CAST(strftime('%M', ended_at, 'localtime') AS INT)))
 			END AS ended_at_minutes
-		FROM entry WHERE date(started_at, 'localtime') = ? OR date(ended_at, 'localtime') = ? ORDER BY started_at_minutes ASC`
+		FROM entry WHERE date(started_at, 'localtime') = ? OR date(ended_at, 'localtime') = ? ORDER BY started_at_minutes ASC, ended_at_minutes ASC, id ASC`
 	args := []any{date, date, date, date}
 	rows, err := db.db.Query(query, args...)
 	if err != nil {

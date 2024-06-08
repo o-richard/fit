@@ -1,6 +1,9 @@
 package components
 
 import "fmt"
+import "github.com/o-richard/fit/pkg/db"
+import "strings"
+import "unicode/utf8"
 
 script insertHealthEntry() {
 	const gallery = document.getElementById("gallery")
@@ -288,7 +291,64 @@ templ HealthEntryDays(year, month string, contents []string) {
 	</main>
 }
 
-templ HealthEntryDay(year, month, day string, contents []string) {
+// The expected order of entries from the database is deterministic
+func getHTMLOfHealthEntries(entries []db.HealthEntryOfDay) string {
+	if len(entries) == 0 {
+		return ""
+	}
+
+	entryTypeColors := map[string]string{
+		db.Sleep: "bg-pink-300 dark:bg-pink-600", db.Nutrition: "bg-rose-300 dark:bg-rose-600",
+		db.Activity: "bg-orange-300 dark:bg-orange-600", db.Health: "bg-lime-300 dark:bg-lime-600",
+	}
+	htmlComponents := strings.Builder{}
+
+	barWidth := 8
+	entryWidth := 32
+	var singleMinute uint = 2
+	var characterHeight uint = 32
+
+	numEntriesToTheLeft := -1
+	var upperLimit uint = entries[0].EndedAtMinutes
+	for _, entry := range entries {
+		top := entry.StartedAtMinutes * singleMinute
+		height := ((entry.EndedAtMinutes + 1) - entry.StartedAtMinutes) * singleMinute
+
+		if entry.StartedAtMinutes <= upperLimit && entry.EndedAtMinutes > upperLimit {
+			upperLimit = entry.EndedAtMinutes
+		}
+		if entry.StartedAtMinutes > upperLimit {
+			numEntriesToTheLeft = -1
+			upperLimit = entry.EndedAtMinutes
+		}
+		numEntriesToTheLeft++
+		left := (numEntriesToTheLeft * entryWidth) + barWidth
+
+		_, _ = htmlComponents.WriteString(fmt.Sprintf(`<div class="absolute %v" style="top: %vpx;left: %vpx;width: %vpx;height: %vpx;">`, entryTypeColors[entry.Type], top, left, entryWidth, height))
+		if slen, maxCharacters := utf8.RuneCountInString(entry.Title), height/characterHeight; slen > 0 && height >= characterHeight {
+			var entryTitle string
+			if slen <= int(maxCharacters) {
+				entryTitle = entry.Title
+			} else if maxCharacters > 3 {
+				entryTitle = entry.Title[:maxCharacters-3] + "..."
+			}
+			if entryTitle != "" {
+				_, _ = htmlComponents.WriteString(fmt.Sprintf(`<p class="[writing-mode:vertical-lr] font-base font-bold flex h-full w-full justify-center items-center">%v</p>`, templ.EscapeString(entry.Title)))
+			}
+		}
+		_, _ = htmlComponents.WriteString(`</div>`)
+		if left > barWidth {
+			/*
+				top = entry_top + entry_height - 1 (accounts for border width)
+				width = entry_left - barWidth
+			*/
+			_, _ = htmlComponents.WriteString(fmt.Sprintf(`<div class="absolute border-black dark:border-white border-dashed border-t-[1px]" style="top: %vpx;left: %vpx;width: %vpx;"></div>`, top+height-1, barWidth, left-barWidth))
+		}
+	}
+	return htmlComponents.String()
+}
+
+templ HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) {
 	<title>Fit</title>
 	<main class="px-2 flex flex-col gap-5">
 		<div class="flex items-center font-semibold space-x-2">
@@ -304,7 +364,7 @@ templ HealthEntryDay(year, month, day string, contents []string) {
 				{ day }
 			</p>
 		</div>
-		if len(contents) == 0 {
+		if len(entries) == 0 {
 			@noHealthEntries()
 		} else {
 			/*
@@ -321,7 +381,7 @@ templ HealthEntryDay(year, month, day string, contents []string) {
 							// total width - |left position| = width of bar so that the border starts of the right edge of the bar
 							<div class="relative before:content-[''] before:absolute before:top-0 before:left-[-20px] before:w-[28px] before:border-gray-400 before:dark:border-gray-200 before:border-t-4">
 								// top & left sizes work out well for the chosen font size
-								<span class="absolute top-[-10px] -left-20 text-base font-medium">
+								<span class="absolute top-[-10px] -left-20 text-base font-bold">
 									{ fmt.Sprintf("%.2d:00", i) }
 								</span>
 							</div>
@@ -332,6 +392,7 @@ templ HealthEntryDay(year, month, day string, contents []string) {
 							}
 						</div>
 					}
+					@templ.Raw(getHTMLOfHealthEntries(entries))
 				</div>
 			</div>
 		}

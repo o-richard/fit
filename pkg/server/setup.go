@@ -93,13 +93,11 @@ func getHealthEntries(c echo.Context) error {
 		if month > 0 && month <= 12 {
 			if day > 0 {
 				if _, err := time.Parse(time.DateOnly, fmt.Sprintf("%.4d-%.2d-%.2d", year, month, day)); err == nil {
-					// TODO: Handle individual entries
-					fmt.Println("ssGH")
-					_, err := appdb.GetHealthEntries(year, month, day)
+					entries, err := appdb.GetHealthEntries(year, month, day)
 					if err != nil {
 						return &echo.HTTPError{Code: http.StatusInternalServerError, Message: err.Error()}
 					}
-					return components.TemplRender(c, http.StatusOK, components.HealthEntryDay(fmt.Sprintf("%.4d", year), db.GetMonthName(fmt.Sprintf("%.2d", month)), fmt.Sprintf("%.2d", day), []string{"simple"}))
+					return components.TemplRender(c, http.StatusOK, components.HealthEntryDay(fmt.Sprintf("%.4d", year), db.GetMonthName(fmt.Sprintf("%.2d", month)), fmt.Sprintf("%.2d", day), entries))
 				}
 			}
 

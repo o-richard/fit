@@ -11,6 +11,9 @@ import "io"
 import "bytes"
 
 import "fmt"
+import "github.com/o-richard/fit/pkg/db"
+import "strings"
+import "unicode/utf8"
 
 func insertHealthEntry() templ.ComponentScript {
 	return templ.ComponentScript{
@@ -161,7 +164,7 @@ func individualEntryCard(bgColor, content, urlparams string) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?%v", urlparams))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 175, Col: 87}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 178, Col: 87}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -196,7 +199,7 @@ func individualEntryCard(bgColor, content, urlparams string) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(content)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 178, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 181, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -391,7 +394,7 @@ func HealthEntryMonths(year string, contents []string) templ.Component {
 		var templ_7745c5c3_Var14 string
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 253, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 256, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -404,7 +407,7 @@ func HealthEntryMonths(year string, contents []string) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 254, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 257, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {
@@ -456,7 +459,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var17 string
 		templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 274, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 277, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 		if templ_7745c5c3_Err != nil {
@@ -469,7 +472,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var18 string
 		templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 275, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 278, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 		if templ_7745c5c3_Err != nil {
@@ -482,7 +485,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var19 string
 		templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 278, Col: 143}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 281, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 		if templ_7745c5c3_Err != nil {
@@ -495,7 +498,7 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 		var templ_7745c5c3_Var20 string
 		templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 279, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 282, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 		if templ_7745c5c3_Err != nil {
@@ -527,7 +530,64 @@ func HealthEntryDays(year, month string, contents []string) templ.Component {
 	})
 }
 
-func HealthEntryDay(year, month, day string, contents []string) templ.Component {
+// The expected order of entries from the database is deterministic
+func getHTMLOfHealthEntries(entries []db.HealthEntryOfDay) string {
+	if len(entries) == 0 {
+		return ""
+	}
+
+	entryTypeColors := map[string]string{
+		db.Sleep: "bg-pink-300 dark:bg-pink-600", db.Nutrition: "bg-rose-300 dark:bg-rose-600",
+		db.Activity: "bg-orange-300 dark:bg-orange-600", db.Health: "bg-lime-300 dark:bg-lime-600",
+	}
+	htmlComponents := strings.Builder{}
+
+	barWidth := 8
+	entryWidth := 32
+	var singleMinute uint = 2
+	var characterHeight uint = 32
+
+	numEntriesToTheLeft := -1
+	var upperLimit uint = entries[0].EndedAtMinutes
+	for _, entry := range entries {
+		top := entry.StartedAtMinutes * singleMinute
+		height := ((entry.EndedAtMinutes + 1) - entry.StartedAtMinutes) * singleMinute
+
+		if entry.StartedAtMinutes <= upperLimit && entry.EndedAtMinutes > upperLimit {
+			upperLimit = entry.EndedAtMinutes
+		}
+		if entry.StartedAtMinutes > upperLimit {
+			numEntriesToTheLeft = -1
+			upperLimit = entry.EndedAtMinutes
+		}
+		numEntriesToTheLeft++
+		left := (numEntriesToTheLeft * entryWidth) + barWidth
+
+		_, _ = htmlComponents.WriteString(fmt.Sprintf(`<div class="absolute %v" style="top: %vpx;left: %vpx;width: %vpx;height: %vpx;">`, entryTypeColors[entry.Type], top, left, entryWidth, height))
+		if slen, maxCharacters := utf8.RuneCountInString(entry.Title), height/characterHeight; slen > 0 && height >= characterHeight {
+			var entryTitle string
+			if slen <= int(maxCharacters) {
+				entryTitle = entry.Title
+			} else if maxCharacters > 3 {
+				entryTitle = entry.Title[:maxCharacters-3] + "..."
+			}
+			if entryTitle != "" {
+				_, _ = htmlComponents.WriteString(fmt.Sprintf(`<p class="[writing-mode:vertical-lr] font-base font-bold flex h-full w-full justify-center items-center">%v</p>`, templ.EscapeString(entry.Title)))
+			}
+		}
+		_, _ = htmlComponents.WriteString(`</div>`)
+		if left > barWidth {
+			/*
+				top = entry_top + entry_height - 1 (accounts for border width)
+				width = entry_left - barWidth
+			*/
+			_, _ = htmlComponents.WriteString(fmt.Sprintf(`<div class="absolute border-black dark:border-white border-dashed border-t-[1px]" style="top: %vpx;left: %vpx;width: %vpx;"></div>`, top+height-1, barWidth, left-barWidth))
+		}
+	}
+	return htmlComponents.String()
+}
+
+func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -547,7 +607,7 @@ func HealthEntryDay(year, month, day string, contents []string) templ.Component 
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 295, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 355, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -560,7 +620,7 @@ func HealthEntryDay(year, month, day string, contents []string) templ.Component 
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 296, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 356, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -573,7 +633,7 @@ func HealthEntryDay(year, month, day string, contents []string) templ.Component 
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 299, Col: 143}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 359, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -586,7 +646,7 @@ func HealthEntryDay(year, month, day string, contents []string) templ.Component 
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 300, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 360, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -599,7 +659,7 @@ func HealthEntryDay(year, month, day string, contents []string) templ.Component 
 		var templ_7745c5c3_Var26 string
 		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(day)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 304, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 364, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -609,7 +669,7 @@ func HealthEntryDay(year, month, day string, contents []string) templ.Component 
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if len(contents) == 0 {
+		if len(entries) == 0 {
 			templ_7745c5c3_Err = noHealthEntries().Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
@@ -620,14 +680,14 @@ func HealthEntryDay(year, month, day string, contents []string) templ.Component 
 				return templ_7745c5c3_Err
 			}
 			for i := 0; i < 24; i++ {
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-[120px]\"><div class=\"relative before:content-[&#39;&#39;] before:absolute before:top-0 before:left-[-20px] before:w-[28px] before:border-gray-400 before:dark:border-gray-200 before:border-t-4\"><span class=\"absolute top-[-10px] -left-20 text-base font-medium\">")
+				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<div class=\"h-[120px]\"><div class=\"relative before:content-[&#39;&#39;] before:absolute before:top-0 before:left-[-20px] before:w-[28px] before:border-gray-400 before:dark:border-gray-200 before:border-t-4\"><span class=\"absolute top-[-10px] -left-20 text-base font-bold\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var27 string
 				templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.2d:00", i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 325, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 385, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 				if templ_7745c5c3_Err != nil {
@@ -647,6 +707,10 @@ func HealthEntryDay(year, month, day string, contents []string) templ.Component 
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
+			}
+			templ_7745c5c3_Err = templ.Raw(getHTMLOfHealthEntries(entries)).Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</div></div>")
 			if templ_7745c5c3_Err != nil {

@@ -12,7 +12,7 @@ The functionality of the platform happens on device unless otherwise.
 
 [X] -> Process & store user-input health entry.
 
-[ ] -> Setup a HTTP server to access a GUI of the application. The server should allow for timeline view of the stored entries.
+[X] -> Setup a HTTP server to access a GUI of the application. The server should allow for timeline view of the stored entries.
 
 [ ] -> Setup Qdrant to embed the stored unstructured data.
 
