@@ -55,6 +55,8 @@ type HealthEntryOfDay struct {
 	StartedAtMinutes uint
 	// number of minutes from midnight
 	EndedAtMinutes uint
+	StartedAt      time.Time
+	EndedAt        time.Time
 }
 
 /*
@@ -213,7 +215,8 @@ func (db *DB) GetHealthEntries(year, month, day int) ([]HealthEntryOfDay, error)
 			CASE 
 				WHEN date(ended_at, 'localtime') <> ? THEN ((23 * 60) + 59)
 				ELSE ((CAST(strftime('%k', ended_at, 'localtime') AS INT) * 60) + (CAST(strftime('%M', ended_at, 'localtime') AS INT)))
-			END AS ended_at_minutes
+			END AS ended_at_minutes,
+			started_at, ended_at
 		FROM entry WHERE date(started_at, 'localtime') = ? OR date(ended_at, 'localtime') = ? ORDER BY started_at_minutes ASC, ended_at_minutes ASC, id ASC`
 	args := []any{date, date, date, date}
 	rows, err := db.db.Query(query, args...)
@@ -225,7 +228,16 @@ func (db *DB) GetHealthEntries(year, month, day int) ([]HealthEntryOfDay, error)
 	var entries []HealthEntryOfDay
 	for rows.Next() {
 		var entry HealthEntryOfDay
-		if err := rows.Scan(&entry.ID, &entry.Type, &entry.ByUser, &entry.Title, &entry.Content, &entry.Images, &entry.StartedAtMinutes, &entry.EndedAtMinutes); err != nil {
+		var startedAt, endedAt string
+		if err := rows.Scan(&entry.ID, &entry.Type, &entry.ByUser, &entry.Title, &entry.Content, &entry.Images, &entry.StartedAtMinutes, &entry.EndedAtMinutes, &startedAt, &endedAt); err != nil {
+			return nil, err
+		}
+		entry.StartedAt, err = time.Parse(dbTimestampLayout, startedAt)
+		if err != nil {
+			return nil, err
+		}
+		entry.EndedAt, err = time.Parse(dbTimestampLayout, endedAt)
+		if err != nil {
 			return nil, err
 		}
 		entries = append(entries, entry)

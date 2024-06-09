@@ -23,7 +23,7 @@ func (db *DB) GetRecentFitnessSync(source string) (time.Time, error) {
 	if errors.Is(err, sql.ErrNoRows) {
 		return time.Time{}, sql.ErrNoRows
 	}
-	return time.Parse("2006-01-02 15:04:05.999999999-07:00", lastUpdatedAt)
+	return time.Parse(dbTimestampLayout, lastUpdatedAt)
 }
 
 /*

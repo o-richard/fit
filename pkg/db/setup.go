@@ -14,6 +14,8 @@ type DB struct {
 	db *sql.DB
 }
 
+const dbTimestampLayout = "2006-01-02 15:04:05.999999999-07:00"
+
 var (
 	dbInstance *DB
 	dbOnce     sync.Once

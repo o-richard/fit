@@ -3,8 +3,10 @@ package server
 import (
 	"fmt"
 	"io"
+	"math/rand/v2"
 	"mime/multipart"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -90,7 +92,7 @@ func parseImageMediaFiles(images []*multipart.FileHeader) ([]string, bool, error
 		defer src.Close()
 
 		// the likelihood of name collision is minimal
-		newFileName := fmt.Sprintf("assets/media/%d_%v", time.Now().Unix(), strings.ReplaceAll(image.Filename, " ", "_"))
+		newFileName := fmt.Sprintf("assets/media/%d_%v.%v", time.Now().Unix(), rand.IntN(1_000_000), filepath.Ext(image.Filename))
 		dst, err := os.Create(newFileName)
 		if err != nil {
 			return imageCleanup(imageNames, true, "Unable to open image destination")

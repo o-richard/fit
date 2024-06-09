@@ -47,7 +47,7 @@ func StartServer(port string) {
 	}
 
 	e.Static("/", "assets/static")
-	e.Static("/media", "assets/images")
+	e.Static("/media", "assets/media")
 
 	e.GET("/", getDashboard)
 	e.GET("/entry", getHealthEntries)
