@@ -567,12 +567,6 @@ func getHTMLOfHealthEntries(entries []db.HealthEntryOfDay) string {
 		db.Sleep: "bg-pink-300 dark:bg-pink-600", db.Nutrition: "bg-violet-300 dark:bg-violet-600",
 		db.Activity: "bg-orange-300 dark:bg-orange-600", db.Health: "bg-lime-300 dark:bg-lime-600",
 	}
-	tooltipColors := map[string]string{
-		db.Sleep:     "bg-pink-300 dark:bg-pink-600 before:bg-pink-300 before:dark:bg-pink-600",
-		db.Nutrition: "bg-violet-300 dark:bg-violet-600 before:bg-violet-300 before:dark:bg-violet-600",
-		db.Activity:  "bg-orange-300 dark:bg-orange-600 before:bg-orange-300 before:dark:bg-orange-600",
-		db.Health:    "bg-lime-300 dark:bg-lime-600 before:bg-lime-300 before:dark:bg-lime-600",
-	}
 	htmlComponents := strings.Builder{}
 
 	barWidth := 8
@@ -599,7 +593,7 @@ func getHTMLOfHealthEntries(entries []db.HealthEntryOfDay) string {
 
 		id := fmt.Sprintf("tooltip_%v", entry.ID)
 		_, _ = htmlComponents.WriteString(fmt.Sprintf(`
-			<div class="absolute %v cursor-pointer flex items-center group" style="top: %vpx;left: %vpx;width: %vpx;height: %vpx;" aria-haspopup="true" onclick="togglePopup('%v');"">`, entryTypeColors[entry.Type], top, left, entryWidth, height, id,
+			<div class="absolute %v cursor-pointer flex items-center group" style="top: %vpx;left: %vpx;width: %vpx;height: %vpx;" aria-haspopup="true" onclick="togglePopup('%v');" onmouseover="openPopup('%v');" onfocus="openPopup('%v');">`, entryTypeColors[entry.Type], top, left, entryWidth, height, id, id, id,
 		))
 		if slen, maxCharacters := utf8.RuneCountInString(entry.Title), height/characterHeight; slen > 0 && height >= characterHeight {
 			var entryTitle string
@@ -619,11 +613,11 @@ func getHTMLOfHealthEntries(entries []db.HealthEntryOfDay) string {
 			2. (choosen) On the bar - The tooltip (large screens) / modal (small screens) can be shown in case the bar is clicked. Number of overlapping entries don't really matter.
 		*/
 		_, _ = htmlComponents.WriteString(fmt.Sprintf(`
-				<div id="%v" role="tooltip" class="z-20 w-80 absolute transition duration-150 ease-in-out shadow-lg p-4 rounded cursor-auto %v hidden before:w-4 before:h-4 before:rotate-45 before:absolute before:z-[-1] before:top-[40%%] before:left-0 before:-ml-2" style="left: 42px;">
-					<div class="flex flex-col gap-4 text-gray-600 dark:text-gray-300">
+				<div id="%v" role="tooltip" class="z-20 w-80 left-[42px] absolute transition duration-150 ease-in-out shadow-xl p-4 rounded-lg cursor-auto bg-gray-100 dark:bg-gray-900 hidden before:w-4 before:h-4 before:rotate-45 before:bg-gray-100 before:dark:bg-gray-900 before:absolute before:z-[-1] before:top-[40%%] before:left-0 before:-ml-2">
+					<div class="flex flex-col gap-4">
 						<h1 class="text-xl font-semibold text-center break-words capitalize">%v</h1>
-						<p class="text-xs text-center">%v - %v</p>
-						<p class="text-sm break-words">%v</p>`, id, tooltipColors[entry.Type], templ.EscapeString(entry.Title), entry.StartedAt.Format(time.RFC822), entry.EndedAt.Format(time.RFC822), templ.EscapeString(entry.Content)))
+						<p class="text-xs text-center font-semibold">%v - %v</p>
+						<p class="text-md break-words">%v</p>`, id, templ.EscapeString(entry.Title), entry.StartedAt.Format(time.RFC822), entry.EndedAt.Format(time.RFC822), templ.EscapeString(entry.Content)))
 
 		imageUrls := cleanImageUrls(entry.Images)
 		if len(imageUrls) > 0 {
@@ -679,7 +673,7 @@ func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) temp
 		var templ_7745c5c3_Var22 string
 		templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v", year))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 427, Col: 127}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 421, Col: 127}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var22))
 		if templ_7745c5c3_Err != nil {
@@ -692,7 +686,7 @@ func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) temp
 		var templ_7745c5c3_Var23 string
 		templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(year)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 428, Col: 10}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 422, Col: 10}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 		if templ_7745c5c3_Err != nil {
@@ -705,7 +699,7 @@ func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) temp
 		var templ_7745c5c3_Var24 string
 		templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v", year, month))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 431, Col: 143}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 425, Col: 143}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 		if templ_7745c5c3_Err != nil {
@@ -718,7 +712,7 @@ func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) temp
 		var templ_7745c5c3_Var25 string
 		templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(month)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 432, Col: 11}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 426, Col: 11}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 		if templ_7745c5c3_Err != nil {
@@ -731,7 +725,7 @@ func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) temp
 		var templ_7745c5c3_Var26 string
 		templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(string(templ.URL(fmt.Sprintf("/entry?year=%v&month=%v&day=%v", year, month, day))))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 435, Col: 155}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 429, Col: 155}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 		if templ_7745c5c3_Err != nil {
@@ -744,7 +738,7 @@ func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) temp
 		var templ_7745c5c3_Var27 string
 		templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(day)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 436, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 430, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 		if templ_7745c5c3_Err != nil {
@@ -772,7 +766,7 @@ func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) temp
 				var templ_7745c5c3_Var28 string
 				templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%.2d:00", i))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 475, Col: 36}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `pkg/components/entries.templ`, Line: 469, Col: 36}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 				if templ_7745c5c3_Err != nil {
@@ -797,7 +791,7 @@ func HealthEntryDay(year, month, day string, entries []db.HealthEntryOfDay) temp
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\t\t\t\t\t\tfunction togglePopup(id) {\n                            const element = document.getElementById(id)\n\t\t\t\t\t\t\telement.classList.toggle(\"hidden\")\n\t\t\t\t\t\t\tif (!element.classList.contains(\"hidden\")) {\n\t\t\t\t\t\t\t\telement.scrollIntoView({ behavior: \"smooth\", block: \"end\", inline: \"nearest\" })\n\t\t\t\t\t\t\t}\n                        }\n\t\t\t\t\t</script></div></div>")
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<script>\n\t\t\t\t\t\tfunction openPopup(id) {\n\t\t\t\t\t\t\tconst element = document.getElementById(id)\n\t\t\t\t\t\t\telement.classList.remove(\"hidden\")\n\t\t\t\t\t\t\telement.scrollIntoView({ behavior: \"smooth\", block: \"end\", inline: \"nearest\" })\n\t\t\t\t\t\t}\n\t\t\t\t\t\tfunction togglePopup(id) {\n                            const element = document.getElementById(id)\n\t\t\t\t\t\t\telement.classList.toggle(\"hidden\")\n\t\t\t\t\t\t\tif (!element.classList.contains(\"hidden\")) {\n\t\t\t\t\t\t\t\telement.scrollIntoView({ behavior: \"smooth\", block: \"end\", inline: \"nearest\" })\n\t\t\t\t\t\t\t}\n                        }\n\t\t\t\t\t</script></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

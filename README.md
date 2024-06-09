@@ -2,7 +2,7 @@
 
 A platform that tracks user health entries & fitness data. User health entries support text and images. Fitness data is obtained from any configured health & wellness app.
 
-The functionality of the platform happens on device unless otherwise.
+All the functionality of the platform is on-device unless otherwise.
 
 # TODO
 
@@ -19,6 +19,19 @@ The functionality of the platform happens on device unless otherwise.
 [ ] -> Process user prompt in Qdrant to obtain entries matching the prompt. History of prompts in the current execution window may be shown.
 
 [ ] -> Process user prompt in LLM to provide answers on health entries in the provided timerange. Additional context may be provided together with the prompt.
+
+# UI/UX
+
+Currently, the GUI is focussed on medium & large screen sizes.
+
+### Screenshots
+
+![New Health Entry](screenshots/new-entry-form.jpeg)
+![Calendar View - Months](screenshots/calendar-dark.jpeg)
+![Calendar View - Days](screenshots/calendar.jpeg)
+![No entries](screenshots/no-entries.jpeg)
+![Health Entries](screenshots/single-entry.jpeg)
+![Health Entry Details](screenshots/single-entry-details.jpeg)
 
 # Project Setup
 
@@ -113,7 +126,7 @@ This directory contains operations for parsing files from configured health & we
 
 Any new parser should implement `Parser` interface which obtains records to insert to the database. The parser is responsible for ensuring that entries are not re-parsed & the process is concurrent-safe. The parser should be registered in `ParseFitnessAppRecords` function.
 
-##### Samsung Health (samsung.go)
+#### Samsung Health (samsung.go)
 
 After data has been exported from the samsung health application, the unzipped export should be places under `/data/parsers/samsung` directory. The unzipped directory contains csv files & a json directory. The files & contents parsed may change over time.
 
@@ -150,10 +163,6 @@ This directory contains external tools used in the project.
 ### db.sqlite3
 
 This sqlite database contains the test data used while building the application, it should be deleted when one plans to use the application with their own data.
-
-# UI/UX
-
-Currently, the GUI is focussed on medium & large screen sizes.
 
 # Credits
 
